@@ -214,7 +214,7 @@ public class Sentence extends ArrayList<Word> {
 		int ix=1;
 		for(String line:lines){
 			String[] cols=WHITESPACE_PATTERN.split(line);
-			if(!cols[0].matches("^[0-9].*")) {
+			if(cols[0].contains("_")) {
 				cols = Arrays.copyOfRange(cols, 1, cols.length);
 			}
 			
