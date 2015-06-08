@@ -2,7 +2,7 @@
 
 This repository contains code for an extended version of the [mate-tools][1] semantic role labeler. Most extensions are described in [Roth and Woodsend, 2014][2]. Unpublished extensions include feature selection routines and some currently undescribed additional functionalities.
 
-June 2015: The current version achieves state-of-the-art performance on the CoNLL-2009 data set (**87.35** F1-score). It is the best performing system for SRL in English to date. A demo is available online [here](http://homepages.inf.ed.ac.uk/mroth/demo.html).
+**June 2015**: The current version achieves state-of-the-art performance on the CoNLL-2009 data set. With F1-scores of **87.35** in-domain and **76.33** out-of-domain, It is the best performing system for SRL in English to date. A demo is available online [here](http://homepages.inf.ed.ac.uk/mroth/demo.html).
 
 # Dependencies
 
