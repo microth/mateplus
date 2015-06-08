@@ -431,12 +431,17 @@ public class Word implements Serializable{
 	public Yield getYield(Predicate pred,String argLabel,Set<Word> argSet){
 		Yield ret=new Yield(pred,mySentence,argLabel);
 		ret.add(this);
-		if(pred==this) //If the predicate is the argument, we don't consider the yield
+		if(pred.idx==this.idx) //If the predicate is the argument, we don't consider the yield
 			return ret;
+		Set<Integer> args = new TreeSet<Integer>();
+		for(Word w : argSet) args.add(w.getIdx());
 		for(Word child:children){
-			if(!argSet.contains(child)){ //We don't branch down this child if 
+			if(!argSet.contains(child.idx)){ //We don't branch down this child if 
 				Collection<Word> subtree=getDominated(Arrays.asList(child));
-				if(!subtree.contains(pred))
+				boolean containspred = false;
+				for(Word w : subtree) if(w.idx==pred.idx) containspred=true;
+				if(!containspred)
+				//if(!subtree.contains(mySentence.get(pred.idx)));
 					ret.addAll(subtree);
 			}
 		}

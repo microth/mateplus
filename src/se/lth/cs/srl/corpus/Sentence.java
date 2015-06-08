@@ -297,7 +297,7 @@ public class Sentence extends ArrayList<Word> {
 	public final Comparator<Word> wordComparator=new Comparator<Word>(){
 		@Override
 		public int compare(Word arg0, Word arg1) {
-			return indexOf(arg0) - indexOf(arg1);
+			return arg0.idx - arg1.idx;
 		}		
 	};
 }

@@ -30,7 +30,7 @@ public class Yield extends TreeSet<Word> implements Comparable<Yield>{
 	public boolean isContinuous(){
 		if(this.size()<2)
 			return true;
-		int senIndex=sen.indexOf(this.first());
+		int senIndex=this.first().idx;
 		for(Word w:this){
 			if(sen.get(senIndex++)!=w)
 				return false;
@@ -59,7 +59,7 @@ public class Yield extends TreeSet<Word> implements Comparable<Yield>{
 		Collection<Yield> ret=new TreeSet<Yield>();
 		String curArgLabel=argLabel;
 		Yield subYield=new Yield(pred,sen,curArgLabel);
-		for(int i=sen.indexOf(this.first());i<=sen.indexOf(this.last());++i){
+		for(int i=this.first().idx;i<=this.last().idx;++i){
 			Word curWord=sen.get(i);
 			if(this.contains(curWord)){ //If this yield contain the word, add it, it's continuous.
 				subYield.add(curWord);
