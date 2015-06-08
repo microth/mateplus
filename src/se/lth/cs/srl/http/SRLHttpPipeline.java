@@ -271,7 +271,7 @@ public class SRLHttpPipeline extends AbstractPipeline {
 			ret.append("</tr>\n");
 		}
 		ret.append("</table>\n<br/><hr/><br/>");
-		ret.append(defaultHandler.pages.get("default"));
+		//ret.append(defaultHandler.pages.get("default"));
 		ret.append(super.HTML_BOTTOM_EXTRA);
 		ret.append("</body></html>");
 		return ret.toString();
