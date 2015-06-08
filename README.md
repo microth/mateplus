@@ -18,7 +18,7 @@ The most recent _mateplus_ SRL model (June 2015) can be downloaded from Google D
 
 [1]: http://code.google.com/p/mate-tools/
 [2]: http://www.aclweb.org/anthology/D14-1045.pdf
-[3]: https://drive.google.com/file/d/0B5aLxfs6OvZBUHRFOEcyLTMzWFE/view?usp=sharing 
+[3]: http://docs.google.com/uc?id=0B5aLxfs6OvZBUHRFOEcyLTMzWFE&export=download
 
 If you are using mateplus in your work--and we highly recommend you do!--please cite the following publication:
 
