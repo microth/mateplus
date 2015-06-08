@@ -11,12 +11,14 @@ The following libraries and model files need to be downloaded in order to run _m
  * Bernd Bohnet's dependency parser and model files (anna-3.3.jar and CoNLL2009-ST-English*.model from http://code.google.com/p/mate-tools/downloads/)
  * The WSJ tokenizer from Stanford CoreNLP (stanford-corenlp-3.x.jar from http://nlp.stanford.edu/software/corenlp.shtml) 
  * A recent Java port of LIBLINEAR (.jar download from http://liblinear.bwaldvogel.de/)
- 
+
+The most recent _mateplus_ SRL model (June 2015) can be downloaded from Google Drive [here][3] 
   
 # References
 
 [1]: http://code.google.com/p/mate-tools/
 [2]: http://www.aclweb.org/anthology/D14-1045.pdf
+[3]: https://drive.google.com/file/d/0B5aLxfs6OvZBUHRFOEcyLTMzWFE/view?usp=sharing 
 
 If you are using mateplus in your work--and we highly recommend you do!--please cite the following publication:
 
