@@ -50,9 +50,8 @@ public class PredicateDisambiguator implements PipelineStep {
 				((Learn.learnOptions!=null && Learn.learnOptions.framenet))) {
 			lexicon = createLexicon("/disk/scratch/mroth/framenet/fndata-1.5/frame/");
 		
-			System.err.println("Using FrameNet!");
 		} else {
-			System.err.println("NOT using FrameNet!");
+			
 		}
 	}
 
@@ -251,11 +250,7 @@ public class PredicateDisambiguator implements PipelineStep {
 	public void train() {
 		models=new HashMap<String,Model>();
 		//Here we need to do them one at a time, thats the whole reason why we collected the Map<String,List<Predicate>> instances map. Otherwise we would easily run out of filehandles.
-		/**
-		 * 
-		 * serial PD learning
-		 * 
-		 * Iterator<String> it=instances.keySet().iterator();
+		Iterator<String> it=instances.keySet().iterator();
 		while(it.hasNext()){
 			String key=it.next();
 			File dataFile=new File(Learn.learnOptions.tempDir,FILE_PREFIX+key);
@@ -267,78 +262,9 @@ public class PredicateDisambiguator implements PipelineStep {
 			Model m=lp.train(true);
 			models.put(key,m);
 			it.remove(); //This way we should lose references to the words and sentences we no longer need, and the gc should be able to clean this up for us.
-		}**/
-		
-		/**
-		 * 
-		 * parallel PD learning
-		 * 
-		 */
-		
-		PDThread[] threads = new PDThread[instances.keySet().size()];
-		Iterator<String> it=instances.keySet().iterator();
-		int i=0;
-		while(it.hasNext()){
-			while(running(threads)>8) {
-				// waiting ...
-			}
-			String key=it.next();
-			File dataFile=new File(Learn.learnOptions.tempDir,FILE_PREFIX+key);
-			LibLinearLearningProblem lp=new LibLinearLearningProblem(dataFile,false);
-			for(Predicate pred:instances.get(key)){
-				addInstance(pred,lp);
-			}
-			lp.done();
-			
-			threads[i] = new PDThread();
-			threads[i].setParams(key, lp);
-			threads[i].start();
-			
-			i++;
-			it.remove();
-		}		
-		while(running(threads)>0) {
-			// waiting ...
-		}
-		
-		for(i=0; i<threads.length; i++) {
-			models.put(threads[i].getKey(),threads[i].getModel());
 		}
 	}
-	
-	private class PDThread extends Thread {
-		Model m;
-		LibLinearLearningProblem lp;
-		String key;
-		
-		public String getKey() {
-			return key;
-		}
 
-		public void setParams(String key, LibLinearLearningProblem lp) {
-			this.key = key;
-			this.lp = lp;
-		}
-
-		public Model getModel() {
-			return m;
-		}
-		
-		public void run() {
-			m=lp.train(true);
-		}
-		
-	}
-
-	private int running(Thread[] threads) {
-		int count = 0;
-		for(Thread t : threads)
-			if(t!=null && t.isAlive())
-				count++;
-		
-		return count;
-	}
-	
 	@Override
 	public void writeModels(ZipOutputStream zos) throws IOException {
 		AbstractStep.writeModels(zos, models, getModelFileName());

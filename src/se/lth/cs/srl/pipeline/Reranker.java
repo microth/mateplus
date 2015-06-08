@@ -211,10 +211,10 @@ public class Reranker extends SemanticRoleLabeler {
 				pipeline.steps.get(1).parse(sen);
 		}
 		
-		int runs = 0;
-		int changes = 1;
-		while(changes>0 && runs<5) {
-			changes = 0;
+		//int runs = 0;
+		//int changes = 1;
+		//while(changes>0 && runs<5) {
+			//changes = 0;
 			for(Predicate pred:sen.getPredicates()){
 				List<ArgMap> candidates=acModule.beamSearch(pred,aiModule.beamSearch(pred,aiBeam),acBeam);
 				for(ArgMap argMap:candidates){
@@ -236,14 +236,14 @@ public class Reranker extends SemanticRoleLabeler {
 				if(bestCandidate.size()==0)
 					zeroArgMapCount++;
 				
-				if( !equal(bestCandidate,pred.getArgMap()) )
-					changes++;					
+				//if( !equal(bestCandidate,pred.getArgMap()) )
+				//	changes++;					
 				pred.setArgMap(bestCandidate);
 			}
-			runs++;			
-		}
-		if(runs>2)
-			System.err.println(runs + " runs needed");
+			//runs++;			
+		//}
+		//if(runs>2)
+		//	System.err.println(runs + " runs needed");
 	}
 
 	private boolean equal(ArgMap newargs, Map<Word, String> oldargs) {
