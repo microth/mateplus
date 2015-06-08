@@ -1,0 +1,33 @@
+N
+ChildWordSet - size: 12813 # 96.565
+PredParentWord - size: 6437 # 98.151
+DepSubCat - size: 4390 # 98.611
+ChildPOSSet - size: 45 # 98.821
+PredParentPOS - size: 34 # 99.008
+PredPOS - size: 25 # 99.068
+PredDeprel - size: 34 # 99.123
+ChildDepSet - size: 35 # 99.173
+ChildWordSet+PredParentWord - size: 63125 # 99.451
+DepSubCat+PredParentWord - size: 22318 # 99.560
+ChildWordSet+PredParentPOS - size: 32279 # 99.651
+PredPOS+PredParentWord - size: 10783 # 99.681
+ChildWordSet+PredPOS - size: 24857 # 99.706
+ChildWordSet+ChildDepSet
+ChildPOSSet+ChildDepSet
+
+V
+ChildWordSet - size: 12813 # 96.565
+PredParentWord - size: 6437 # 98.151
+DepSubCat - size: 4390 # 98.611
+ChildPOSSet - size: 45 # 98.821
+PredParentPOS - size: 34 # 99.008
+PredPOS - size: 25 # 99.068
+PredDeprel - size: 34 # 99.123
+ChildDepSet - size: 35 # 99.173
+ChildWordSet+PredParentWord - size: 63125 # 99.451
+DepSubCat+PredParentWord - size: 22318 # 99.560
+ChildWordSet+PredParentPOS - size: 32279 # 99.651
+PredPOS+PredParentWord - size: 10783 # 99.681
+ChildWordSet+PredPOS - size: 24857 # 99.706
+ChildWordSet+ChildDepSet
+ChildPOSSet+ChildDepSet

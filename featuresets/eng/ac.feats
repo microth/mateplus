@@ -1,0 +1,63 @@
+N
+ArgWord - size: 11313 # 26.203
+PredWord - size: 7884 # 29.199
+ArgPOS - size: 39 # 29.937
+PredLemmaSense - size: 5440 # 30.351
+RightWord - size: 7840 # 30.774
+Position - size: 3 # 31.017
+LeftSiblingWord - size: 6679 # 31.131
+LeftWord - size: 5408 # 31.212
+PredLemma - size: 4617 # 31.269
+ChildPOSSet - size: 45 # 31.317
+RightPOS - size: 37 # 31.391
+LeftSiblingPOS - size: 45 # 31.423
+ArgWord+PredLemmaSense - size: 68929 # 32.584
+ArgPOS+PredLemmaSense - size: 23739 # 33.006
+POSPath+PredLemmaSense - size: 35339 # 33.274
+POSDepPath+PredLemmaSense
+ArgWord+Position - size: 15700 # 33.444
+Position+PredLemmaSense - size: 10385 # 33.550
+PredLemmaSense+RightSiblingPOS - size: 25180 # 33.607
+LeftPOS+RightSiblingPOS - size: 585 # 33.672
+ArgPOS+Position - size: 85 # 33.688
+LeftSiblingPOS+PredLemmaSense - size: 23325 # 33.728
+WordEmbeddingArg
+WordEmbeddingAvgArg
+WordEmbeddingPath
+WordEmbeddingDepPath
+WordEmbeddingAvgArg+Position
+WordEmbeddingArg+PredLemmaSense
+WordEmbeddingArg+PredLemma
+WordEmbeddingArg+ArgPOS
+
+V
+ArgWord - size: 11130 # 37.124
+ArgDeprel - size: 49 # 42.629
+PredLemmaSense - size: 5407 # 45.975
+ChildDepSet - size: 34 # 47.582
+DeprelPath - size: 6106 # 48.335
+RightWord - size: 7790 # 48.878
+ArgPOS - size: 40 # 49.367
+Position - size: 3 # 49.709
+PredPOS - size: 24 # 49.950
+LeftSiblingPOS - size: 45 # 50.151
+PredLemma - size: 4584 # 50.338
+LeftPOS - size: 41 # 50.392
+RightPOS - size: 40 # 50.509
+PredParentWord - size: 5272 # 50.602
+POSPath - size: 6553 # 50.679
+POSDepPath
+PredParentPOS - size: 35 # 50.710
+ArgWord+PredLemmaSense - size: 67759 # 51.331
+ArgDeprel+PredLemmaSense - size: 15668 # 51.443
+ChildDepSet+Position - size: 88 # 51.656
+ArgDeprel+RightPOS - size: 504 # 51.769
+Position+PredLemmaSense - size: 7868 # 51.906
+ArgPOS+ArgWord - size: 8273 # 52.073
+ArgPOS+PredLemma - size: 15080 # 52.210
+ArgDeprel+ArgPOS - size: 397 # 52.301
+WordEmbeddingArg
+WordEmbeddingArg+PredLemma
+WordEmbeddingCompArg+Position
+WordEmbeddingPath+Position
+WordEmbeddingAvgArg+Position
