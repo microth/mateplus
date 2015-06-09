@@ -8,7 +8,7 @@ This repository contains code for an extended version of the [mate-tools][1] sem
 
 The following libraries and model files need to be downloaded in order to run _mateplus_:
 
- * Bernd Bohnet's dependency parser and model files ([`anna-3.3.jar` and `CoNLL2009-ST-English*.model`](http://code.google.com/p/mate-tools/Downloads/))
+ * Bernd Bohnet's dependency parser and model files ([`anna-3.3.jar` and `CoNLL2009-ST-English*.model`](http://code.google.com/p/mate-tools/Downloads/))<sup>1</sup>
  * The WSJ tokenizer from Stanford CoreNLP ([`stanford-corenlp-3.x.jar`](http://nlp.stanford.edu/software/corenlp.shtml)) 
  * A recent Java port of LIBLINEAR ([`liblinear-x.jar`](http://liblinear.bwaldvogel.de/))
 
@@ -29,3 +29,7 @@ It is also possible to apply the mateplus SRL model on already preprocessed text
 If you are using mateplus in your work--and we highly recommend you do!--please cite the following publication:
 
 Roth, M. and Woodsend, K. (2014). Composition of word representations improves semantic role labelling. Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP), Doha, Qatar, October, pp. 407-413
+
+
+<hr/>
+<font size="-1"><sup>1</sup> To reproduce our evaluation results on the CoNLL-2009 data set, preprocessing components must be retrained on the training split only, using 10-fold jackknifing.</font> 

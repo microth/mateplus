@@ -32,7 +32,7 @@ public class Yield extends TreeSet<Word> implements Comparable<Yield>{
 			return true;
 		int senIndex=this.first().idx;
 		for(Word w:this){
-			if(sen.get(senIndex++)!=w)
+			if(w.idx!=senIndex++)
 				return false;
 		}
 		return true;

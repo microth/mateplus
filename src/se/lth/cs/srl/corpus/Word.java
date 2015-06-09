@@ -436,7 +436,7 @@ public class Word implements Serializable{
 		Set<Integer> args = new TreeSet<Integer>();
 		for(Word w : argSet) args.add(w.getIdx());
 		for(Word child:children){
-			if(!argSet.contains(child.idx)){ //We don't branch down this child if 
+			if(!args.contains(child.idx)){ //We don't branch down this child if 
 				Collection<Word> subtree=getDominated(Arrays.asList(child));
 				boolean containspred = false;
 				for(Word w : subtree) if(w.idx==pred.idx) containspred=true;

@@ -211,14 +211,14 @@ public class SRLHttpPipeline extends AbstractPipeline {
 					errors.delete(errors.length()-2,errors.length());
 					errors.append("])).\n");
 				}
-				int blankColSpan=sen.indexOf(y.first())-indexCount;
+				int blankColSpan=y.first().getIdx()-indexCount; //sen.indexOf(y.first())-indexCount;
 				if(blankColSpan>0){
 					ret.append("<td colspan=\"").append(blankColSpan).append("\">&nbsp;</td>");
 				} else if(blankColSpan<0){
 					errors.append("Argument '"+y.getArgLabel()+"' of '"+pred.getSense()+"' at index "+indexCount+" overlaps with previous argument(s), ignored.\n");
 					continue;
 				}
-				int argColWidth=sen.indexOf(y.last())-sen.indexOf(y.first())+1;
+				int argColWidth=y.last().getIdx()-y.first().getIdx()+1;
 				String argLabel=y.getArgLabel();
 				ret.append("<td colspan=\"")
 				   .append(argColWidth)
