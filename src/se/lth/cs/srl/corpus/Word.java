@@ -126,29 +126,36 @@ public class Word implements Serializable{
 		this.corefid=w.corefid;
 		
    		if(s==null) {
-                    this.mySentence=w.mySentence;
-		} else
-                    this.mySentence = s;
+             this.mySentence=w.mySentence;
+		} else {
+             this.mySentence = s;
+             if(s.size()>this.idx) {
+            	 s.remove(this.idx);
+            	 s.add(this.idx, this);
+             }
+		}
 		this.isBOS=w.isBOS;
 		this.rep = new Double[w.rep.length];
 		for(int i=0; i<w.rep.length; i++)
                     this.rep[i] = w.rep[i];
 		this.begin=w.begin;
 		this.end=w.end;
-		if(s==null) {
-                    //Then we have to update our children to make them point to this head rather than the old
-                    for(Word child:children)
-                        child.head=this;
-                    //And update our head's children to forget the old and add this one
-                    head.children.remove(w);
-                    head.children.add(this);
-		} else {
-                    if(Learn.learnOptions!=null && Learn.learnOptions.deterministicPipeline){
-                        children=new TreeSet<Word>(mySentence.wordComparator);
-                    } else {
-                        children=new HashSet<Word>();
-                    }
+		//if(s==null) {
+            //Then we have to update our children to make them point to this head rather than the old
+		if(head!=null) {
+            for(Word child:children)
+                child.head=this;
+            //And update our head's children to forget the old and add this one
+            head.children.remove(w);
+            head.children.add(this);
 		}
+		/*} else {
+            if(Learn.learnOptions!=null && Learn.learnOptions.deterministicPipeline){
+                children=new TreeSet<Word>(mySentence.wordComparator);
+            } else {
+                children=new HashSet<Word>();
+            }
+		}*/
 	}
 	
 	public Word(String[] CoNLL2009Columns,Sentence s,int idx){
