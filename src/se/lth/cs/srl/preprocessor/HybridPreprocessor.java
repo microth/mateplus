@@ -32,4 +32,7 @@ public class HybridPreprocessor extends Preprocessor {
 		return parser.parse(sentence);
 	}
 	
+	public boolean hasParser() {
+		return parser!=null;
+	}
 }

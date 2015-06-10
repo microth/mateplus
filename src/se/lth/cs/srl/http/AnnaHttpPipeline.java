@@ -10,6 +10,7 @@ import se.lth.cs.srl.http.whatswrongglue.WhatsWrongHelper;
 import se.lth.cs.srl.languages.Language;
 import se.lth.cs.srl.languages.Language.L;
 import se.lth.cs.srl.options.HttpOptions;
+import se.lth.cs.srl.preprocessor.PipelinedPreprocessor;
 import se.lth.cs.srl.preprocessor.Preprocessor;
 import se.lth.cs.srl.util.Sentence2RDF;
 

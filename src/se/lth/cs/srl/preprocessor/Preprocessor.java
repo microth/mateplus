@@ -9,6 +9,7 @@ public abstract class Preprocessor {
 	public long tokenizeTime=0;
 	public long dpTime=0;
 
+	public abstract boolean hasParser();
 	public abstract StringBuilder getStatus();
 	protected abstract SentenceData09 preprocess(SentenceData09 sentence);
 	

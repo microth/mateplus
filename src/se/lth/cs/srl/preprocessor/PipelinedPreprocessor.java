@@ -118,13 +118,12 @@ public class PipelinedPreprocessor extends Preprocessor {
 		reader.close();
 	}*/
 	
-	public boolean hasParser() {
-		return parser!=null;
-	}
 
 	public void resetStartPosition() {
 		((StanfordPTBTokenizer)tokenizer).resetStartPosition();
 	}
 	
-	
+	public boolean hasParser() {
+		return parser!=null;
+	}
 }
