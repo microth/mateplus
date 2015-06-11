@@ -9,6 +9,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import se.lth.cs.srl.CompletePipeline;
+import se.lth.cs.srl.options.CompletePipelineCMDLineOptions;
+import se.lth.cs.srl.options.FullPipelineOptions;
+
 public class Sentence extends ArrayList<Word> {
 
 	private static final Pattern WHITESPACE_PATTERN=Pattern.compile("\\s+");
@@ -55,16 +59,18 @@ public class Sentence extends ArrayList<Word> {
 	
 	public Sentence(SentenceData09 data,boolean skipTree){
 		this();
-		for(int i=0;i<data.forms.length;++i){
-			Word nextWord=new Word(data.forms[i],data.plemmas[i],data.ppos[i],data.pfeats[i],this,i+1);
+		int offset = 0;
+		if(data.pheads[0]==-1) offset++;
+		for(int i=0+offset;i<data.forms.length;++i){
+			Word nextWord=new Word(data.forms[i],data.plemmas[i],data.ppos[i],data.pfeats[i],this,i+1-offset);
 			super.add(nextWord);
 		}
 		if(skipTree)
 			return;
-		for(int i=0;i<data.forms.length;++i){
+		for(int i=0;i<data.forms.length-offset;++i){
 			Word curWord=super.get(i+1);
-			curWord.setHead(super.get(data.pheads[i]));
-			curWord.setDeprel(data.plabels[i]);
+			curWord.setHead(super.get(data.pheads[i+offset]));
+			curWord.setDeprel(data.plabels[i+offset]);
 		}
 		this.buildDependencyTree();
 	}

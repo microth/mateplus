@@ -7,6 +7,7 @@ import is2.data.SentenceData09;
 public abstract class Preprocessor {
 	protected Tokenizer tokenizer;
 	public long tokenizeTime=0;
+	public long lemmatizeTime=0;
 	public long dpTime=0;
 
 	public abstract boolean hasParser();

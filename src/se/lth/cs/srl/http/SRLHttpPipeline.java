@@ -299,6 +299,7 @@ public class SRLHttpPipeline extends AbstractPipeline {
 	public static void main(String[] args) throws ZipException, IOException, ClassNotFoundException{
 		HttpOptions options=new HttpOptions();
 		options.parseCmdLineArgs(args);
+
 		String error=FileExistenceVerifier.verifyCompletePipelineAllNecessaryModelFiles(options);
 		if(error!=null){
 			System.err.println(error);

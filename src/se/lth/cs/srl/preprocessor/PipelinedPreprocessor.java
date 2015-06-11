@@ -33,7 +33,6 @@ public class PipelinedPreprocessor extends Preprocessor {
 		this.parser=parser;
 	}
 	
-	public long lemmatizeTime=0;
 	public long tagTime=0;
 	public long mtagTime=0;
 	

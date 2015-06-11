@@ -53,9 +53,10 @@ public class German extends Language {
 	@Override
 	public String verifyLanguageSpecificModelFiles(FullPipelineOptions options) { //TODO this could be done nicer... I guess the proper way would be to create an enum of all the modules in the complete pipeline, and let each language enumerate which modules it requires. Then the language class can handle the verification, and not every subclass. 
 		File[] files;
-		files=new File[2];
-		files[0]=options.lemmatizer;
-		files[1]=options.morph;
+		//files=new File[2];
+		//files[0]=options.lemmatizer;
+		//files[1]=options.morph;
+		files = new File[0];
 		return FileExistenceVerifier.verifyFiles(files);
 
 	}

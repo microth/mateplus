@@ -1,5 +1,7 @@
 package se.lth.cs.srl;
 
+import is2.data.SentenceData09;
+
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -17,12 +19,16 @@ import se.lth.cs.srl.corpus.StringInText;
 import se.lth.cs.srl.io.ANNWriter;
 import se.lth.cs.srl.io.CoNLL09Writer;
 import se.lth.cs.srl.io.SentenceWriter;
+import se.lth.cs.srl.languages.German;
 import se.lth.cs.srl.languages.Language;
+import se.lth.cs.srl.languages.Language.L;
 import se.lth.cs.srl.options.CompletePipelineCMDLineOptions;
 import se.lth.cs.srl.options.FullPipelineOptions;
 import se.lth.cs.srl.pipeline.Pipeline;
 import se.lth.cs.srl.pipeline.Reranker;
 import se.lth.cs.srl.pipeline.Step;
+import se.lth.cs.srl.preprocessor.HybridPreprocessor;
+import se.lth.cs.srl.preprocessor.PipelinedPreprocessor;
 import se.lth.cs.srl.preprocessor.Preprocessor;
 import se.lth.cs.srl.util.ChineseDesegmenter;
 import se.lth.cs.srl.util.FileExistenceVerifier;
@@ -36,7 +42,7 @@ public class CompletePipeline {
 	public SemanticRoleLabeler srl;
 	
 	public static CompletePipeline getCompletePipeline(FullPipelineOptions options) throws ZipException, IOException, ClassNotFoundException{
-		Preprocessor pp=Language.getLanguage().getPreprocessor(options);
+		Preprocessor pp = Language.getLanguage().getPreprocessor(options);
 		Parse.parseOptions=options.getParseOptions();
 		SemanticRoleLabeler srl;
 		if(options.reranker){
@@ -73,7 +79,8 @@ public class CompletePipeline {
 	public Sentence parseX(List<StringInText> words) throws Exception{
 		String[] array = new String[words.size()];
 		for(int i=0; i<array.length; i++) array[i] = words.get(i).word();
-		Sentence s=new Sentence(pp.preprocess(array),false);
+		SentenceData09 tmp = pp.preprocess(array);
+		Sentence s=new Sentence(tmp,false);
 		for(int i=0; i<array.length; i++) {
 			s.get(i).setBegin(words.get(i).begin());
 			s.get(i).setEnd(words.get(i).end());

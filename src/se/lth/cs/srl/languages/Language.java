@@ -12,9 +12,12 @@ import java.util.regex.Pattern;
 import se.lth.cs.srl.corpus.Predicate;
 import se.lth.cs.srl.corpus.Word;
 import se.lth.cs.srl.options.FullPipelineOptions;
+import se.lth.cs.srl.preprocessor.HybridPreprocessor;
+import se.lth.cs.srl.preprocessor.PipelinedPreprocessor;
 import se.lth.cs.srl.preprocessor.Preprocessor;
 import se.lth.cs.srl.preprocessor.tokenization.Tokenizer;
 import se.lth.cs.srl.preprocessor.tokenization.WhiteSpaceTokenizer;
+import se.lth.cs.srl.preprocessor.tokenization.OpenNLPToolsTokenizerWrapper;
 import se.lth.cs.srl.util.BohnetHelper;
 
 
@@ -56,12 +59,19 @@ public abstract class Language {
 	public abstract String getLexiconURL(Predicate pred);
 	
 	public Preprocessor getPreprocessor(FullPipelineOptions options) throws IOException {
-		Tokenizer tokenizer=(options.loadPreprocessorWithTokenizer ? getTokenizer(options.tokenizer): null);
-		Lemmatizer lemmatizer=getLemmatizer(options.lemmatizer);
-		Tagger tagger=options.tagger==null?null:BohnetHelper.getTagger(options.tagger);
-		is2.mtag.Tagger mtagger=options.morph==null?null:BohnetHelper.getMTagger(options.morph);
-		Parser parser=options.parser==null?null:BohnetHelper.getParser(options.parser);
-		Preprocessor pp=new Preprocessor(tokenizer, lemmatizer, tagger, mtagger, parser);
+		Preprocessor pp;
+		if(options.hybrid) {			
+			Tokenizer tokenizer=(options.loadPreprocessorWithTokenizer ? getTokenizer(options.tokenizer): null);
+			Lemmatizer lemmatizer=getLemmatizer(options.lemmatizer);
+			pp = new HybridPreprocessor(tokenizer, lemmatizer, options.parser);
+		} else {
+			Tokenizer tokenizer=(options.loadPreprocessorWithTokenizer ? getTokenizer(options.tokenizer): null);
+			Lemmatizer lemmatizer=getLemmatizer(options.lemmatizer);
+			Tagger tagger=options.tagger==null?null:BohnetHelper.getTagger(options.tagger);
+			is2.mtag.Tagger mtagger=options.morph==null?null:BohnetHelper.getMTagger(options.morph);
+			Parser parser=options.parser==null?null:BohnetHelper.getParser(options.parser);
+			pp=new PipelinedPreprocessor(tokenizer, lemmatizer, tagger, mtagger, parser);
+		}
 		return pp;
 	}
 	
@@ -78,7 +88,7 @@ public abstract class Language {
 	}
 
 	Tokenizer getTokenizerFromModelFile(File tokenModelFile) throws IOException {
-		return null; //OpenNLPToolsTokenizerWrapper.loadOpenNLPTokenizer(tokenModelFile);
+		return OpenNLPToolsTokenizerWrapper.loadOpenNLPTokenizer(tokenModelFile);
 	}
 	
 	Lemmatizer getLemmatizer(File lemmaModelFile) throws IOException{
