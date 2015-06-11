@@ -14,11 +14,13 @@ public class HttpOptions extends FullPipelineOptions {
 	public File pageBottomHTMLFile;
 	
 	@Override
+	protected
 	String getSubUsageOptions() {
 		return "-port   <int>     the port to use (default 8081)";
 	}
 
 	@Override
+	protected
 	int trySubParseArg(String[] args, int ai) {
 		if(args[ai].equals("-port")){
 			ai++;
@@ -48,6 +50,7 @@ public class HttpOptions extends FullPipelineOptions {
 	}
 
 	@Override
+	protected
 	Class<?> getIntendedEntryClass() {
 		return HttpPipeline.class;
 	}
