@@ -11,6 +11,9 @@ import se.lth.cs.srl.corpus.Sentence;
 import se.lth.cs.srl.corpus.Word;
 import se.lth.cs.srl.features.Feature;
 import se.lth.cs.srl.features.FeatureSet;
+import se.lth.cs.srl.languages.German;
+import se.lth.cs.srl.languages.Language;
+import se.lth.cs.srl.languages.Language.L;
 import uk.ac.ed.inf.srl.ml.LearningProblem;
 import uk.ac.ed.inf.srl.ml.Model;
 
@@ -65,7 +68,8 @@ public class PredicateIdentifier extends AbstractStep {
 	public void parse(Sentence s){
 		for(int i=1,size=s.size();i<size;++i){
 			Integer label=classifyInstance(s,i);
-			if(label.equals(POSITIVE))
+						
+			if(label.equals(POSITIVE) || (Language.getLanguage() instanceof German && s.get(i).getPOS().startsWith("VV")) )
 				s.makePredicate(i);
 		}
 	}
