@@ -25,10 +25,6 @@ If copies of all required libraries and models are available in the subdirectori
 
 It is also possible to apply the mateplus SRL model on already preprocessed text in the CoNLL 2009 format, using the Java class `se.lth.cs.srl.Parse`. Since mateplus is trained based on input preprocessed with mate-tools, however, we strongly recommend to use the complete pipeline to achieve best performance. 
 
-# Reproducing CoNLL evaluation results
-
-If you want to reproduce our results on the CoNLL-2009 data sets, please make sure to use preprocessing models that are learned on the training splits of CoNLL-2009 only.
-
 # References
 
 [1]: http://code.google.com/p/mate-tools/
@@ -38,7 +34,16 @@ If you want to reproduce our results on the CoNLL-2009 data sets, please make su
 
 If you are using mateplus in your work--and we highly recommend you do!--please cite the following publication:
 
-Roth, M. and Woodsend, K. (2014). Composition of word representations improves semantic role labelling. Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP), Doha, Qatar, October, pp. 407-413
+Michael Roth and Kristian Woodsend (2014). Composition of word representations improves semantic role labelling. Proceedings of the 2014 Conference on Empirical Methods in Natural Language Processing (EMNLP), Doha, Qatar, October, pp. 407-413
+
+Depending on which parts of the pipeline you are using, please also cite the following.
+
+***German joint parsing model***: Bernd Bohnet, Joakim Nivre, Igor Boguslavsky, Richárd Farkas, Filip Ginter, Jan Hajic (2013). Joint morphological and syntactic analysis for richly inflected languages. Transactions of the Association for Computational Linguistics (TACL) 1:415--428
+
+***English parsing model***: Bernd Bohnet (2010). Very high accuracy and fast dependency parsing is not a contradiction. The 23rd International Conference on Computational Linguistics (COLING), Beijing, China. 
+
+Original mate-tools ***SRL model***: Anders Björkelund, Love Hafdell, and Pierre Nugues (2009). Multilingual semantic role labeling. In Proceedings of The Thirteenth Conference on Computational Natural Language Learning (CoNLL), Boulder, Colorado, pp. 43--48 
+
 
 
 <hr/>
