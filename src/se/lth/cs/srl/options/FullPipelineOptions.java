@@ -78,7 +78,7 @@ public abstract class FullPipelineOptions {
 	}
 
 
-	abstract int trySubParseArg(String[] args,int ai);
+	protected abstract int trySubParseArg(String[] args,int ai);
 	
 	/**
 	 * Tries to parse one argument off the cmdline. 
@@ -145,8 +145,8 @@ public abstract class FullPipelineOptions {
 		return ai;
 	}
 
-	abstract Class<?> getIntendedEntryClass();
-	abstract String getSubUsageOptions();
+	protected abstract Class<?> getIntendedEntryClass();
+	protected abstract String getSubUsageOptions();
 	public void printUsage(PrintStream out){		
 			out.println("Usage:");
 			out.println("java -cp ... "+getIntendedEntryClass().getName()+" <lang> <options>");

@@ -1,9 +1,9 @@
 package se.lth.cs.srl.corpus;
 
 public class StringInText {
-	String s;
-	int beginPos;
-	int endPos;
+	protected String s;
+	protected int beginPos;
+	protected int endPos;
 	
 	public StringInText(String s, int beginPos, int endPos) {
 		this.s = s;

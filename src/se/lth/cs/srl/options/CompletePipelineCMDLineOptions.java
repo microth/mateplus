@@ -17,6 +17,7 @@ public class CompletePipelineCMDLineOptions extends FullPipelineOptions {
 	}
 	
 	@Override
+	protected
 	String getSubUsageOptions() {
 		return "-test   <file>    the input corpus. assumed to be tokenized like CoNLL 09 data\n" +
 			   "-out    <file>    the file to write output to (default out.txt)\n" +
@@ -25,7 +26,7 @@ public class CompletePipelineCMDLineOptions extends FullPipelineOptions {
 	}
 
 	@Override
-	int trySubParseArg(String[] args, int ai) {
+	protected int trySubParseArg(String[] args, int ai) {
 		if(args[ai].equals("-out")){
 			ai++;
 			output=new File(args[ai]);
@@ -57,6 +58,7 @@ public class CompletePipelineCMDLineOptions extends FullPipelineOptions {
 	}
 
 	@Override
+	protected
 	Class<?> getIntendedEntryClass() {
 		return CompletePipeline.class;
 	}
