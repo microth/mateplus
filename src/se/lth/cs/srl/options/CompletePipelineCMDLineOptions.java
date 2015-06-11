@@ -49,6 +49,9 @@ public class CompletePipelineCMDLineOptions extends FullPipelineOptions {
 			super.loadPreprocessorWithTokenizer=true;
 			skipPI=false; //Same as above
 			desegment=false;
+		} else if(args[ai].equals("-hybrid")){
+			hybrid=true;
+			ai++;
 		}
 		return ai;
 	}

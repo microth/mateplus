@@ -4,13 +4,20 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
+import edu.stanford.nlp.ling.Word;
+import edu.stanford.nlp.process.PTBTokenizer;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
 import se.lth.cs.srl.corpus.StringInText;
 
 public class OpenNLPToolsTokenizerWrapper implements Tokenizer {
-        
+	private int startpos = 0;
+
         opennlp.tools.tokenize.Tokenizer tokenizer;
 
         public OpenNLPToolsTokenizerWrapper(opennlp.tools.tokenize.Tokenizer tokenizerImplementation){
@@ -35,6 +42,20 @@ public class OpenNLPToolsTokenizerWrapper implements Tokenizer {
 
 		@Override
 		public StringInText[] tokenizeplus(String sentence) {
-			return null;
+			Reader r=new StringReader(sentence);
+			List<StringInText> l=new ArrayList<StringInText>();
+			for(String s : tokenize(sentence)) {
+				Word w = new Word(s);
+				l.add(new StringInText(w.word(), w.beginPosition()+startpos, w.endPosition()+startpos));
+			}
+			StringInText[] tok=new StringInText[l.size()];
+			//tok[0]=new StringInText(is2.io.CONLLReader09.ROOT,0,0);
+			int i=0;
+			for(StringInText s:l)
+				tok[i++]=s;
+			
+			startpos += (1+sentence.length());
+			
+			return tok;
 		}
 }

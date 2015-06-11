@@ -30,6 +30,7 @@ public abstract class FullPipelineOptions {
 
     public boolean printRDF = false;
 	public boolean printANN = false;
+	public boolean hybrid = false;
     
 	public static String NULL_LANGUAGE_NAME="Unk";
 	
@@ -89,6 +90,9 @@ public abstract class FullPipelineOptions {
 		if(args[ai].equals("-h") || args[ai].equals("-help") || args[ai].equals("--help")){
 			printUsage(System.err);
 			System.exit(1);
+		} else if(args[ai].equals("-hybrid")) {
+			ai++;
+			hybrid=true;
 		} else if(args[ai].equals("-token")){
 			ai++;
 			tokenizer=new File(args[ai]);
