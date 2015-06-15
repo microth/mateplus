@@ -234,6 +234,9 @@ public class Word implements Serializable{
 	public void setPOS(String POS) {
 		this.POS = POS;
 	}
+	public void setFeats(String Feats) {
+		this.Feats = Feats;
+	}
 	public String getFeats() {
 		return Feats;
 	}
