@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import se.lth.cs.srl.corpus.Predicate;
 import se.lth.cs.srl.corpus.Word;
 import se.lth.cs.srl.options.FullPipelineOptions;
+import se.lth.cs.srl.preprocessor.ExternalPreprocessor;
 import se.lth.cs.srl.preprocessor.HybridPreprocessor;
 import se.lth.cs.srl.preprocessor.PipelinedPreprocessor;
 import se.lth.cs.srl.preprocessor.Preprocessor;
@@ -63,7 +64,10 @@ public abstract class Language {
 		if(options.hybrid) {			
 			Tokenizer tokenizer=(options.loadPreprocessorWithTokenizer ? getTokenizer(options.tokenizer): null);
 			Lemmatizer lemmatizer=getLemmatizer(options.lemmatizer);
-			pp = new HybridPreprocessor(tokenizer, lemmatizer, options.parser);
+			pp = new HybridPreprocessor(tokenizer, lemmatizer, options.parser);	
+		} else if(options.external) {
+			Tokenizer tokenizer=(options.loadPreprocessorWithTokenizer ? getTokenizer(options.tokenizer): null);
+			pp = new ExternalPreprocessor(tokenizer, options.parser);
 		} else {
 			Tokenizer tokenizer=(options.loadPreprocessorWithTokenizer ? getTokenizer(options.tokenizer): null);
 			Lemmatizer lemmatizer=getLemmatizer(options.lemmatizer);

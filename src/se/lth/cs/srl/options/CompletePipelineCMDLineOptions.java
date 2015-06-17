@@ -53,6 +53,9 @@ public class CompletePipelineCMDLineOptions extends FullPipelineOptions {
 		} else if(args[ai].equals("-hybrid")){
 			hybrid=true;
 			ai++;
+		} else if(args[ai].equals("-external")){
+			external=true;
+			ai++;
 		}
 		return ai;
 	}

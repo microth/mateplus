@@ -31,6 +31,7 @@ public abstract class FullPipelineOptions {
     public boolean printRDF = false;
 	public boolean printANN = false;
 	public boolean hybrid = false;
+	public boolean external = false;
     
 	public static String NULL_LANGUAGE_NAME="Unk";
 	
@@ -93,7 +94,10 @@ public abstract class FullPipelineOptions {
 		} else if(args[ai].equals("-hybrid")) {
 			ai++;
 			hybrid=true;
-		} else if(args[ai].equals("-token")){
+		} else if(args[ai].equals("-external")) {
+			ai++;
+			external=true;
+		}else if(args[ai].equals("-token")){
 			ai++;
 			tokenizer=new File(args[ai]);
 			ai++;
