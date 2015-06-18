@@ -2,6 +2,7 @@
 LEMMA_MODEL=models/lemma-ger.model
 PARSER_MODEL=models/parse-ger.model # Bernd's joint tagging/parsing model
 TOKEN_MODEL=models/token-ger.model # German tokenization model for OpenNLP
+SRL_MODEL=models/srl-EMNLP14+fs-ger.model # German mateplus SRL model, trained on joint tagger/parser output
 
 RERANKER="-reranker"
 TOKENIZE="-tokenize -token $TOKEN_MODEL"
