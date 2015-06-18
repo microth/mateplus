@@ -1,0 +1,11 @@
+V
+PredFeats
+PredParentWord
+PredParentPOS
+PredParentFeats
+DepSubCat
+ChildDepSet
+ChildWordSet
+ChildPOSSet
+DepSubCat+PredFeats
+DepSubCat+PredParentFeats

@@ -1,0 +1,12 @@
+V
+PredWord
+PredLemma
+PredParentWord
+PredParentPOS
+ChildDepSet
+ChildWordSet
+ChildWordSet+ChildDepSet
+ChildPOSSet
+ChildPOSSet+ChildDepSet
+DepSubCat
+PredDeprel

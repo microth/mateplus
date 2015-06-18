@@ -1,0 +1,32 @@
+V
+ArgDeprel - size: 36 # 63.517
+PredLemmaSense - size: 1174 # 71.699
+ArgWord - size: 8237 # 74.273
+RightSiblingWord - size: 3662 # 75.997
+ChildDepSet - size: 34 # 76.703
+DeprelPath - size: 865 # 77.201
+PredLemma - size: 563 # 77.741
+POSDepPath - size: 982 # 78.094
+LeftSiblingFeats - size: 24 # 78.468
+LeftFeats - size: 22 # 78.738
+PredFeats - size: 13 # 78.904
+ArgFeats - size: 24 # 78.966
+RightSiblingPOS - size: 44 # 79.174
+PredParentPOS - size: 30 # 79.381
+ArgPOS+PredLemmaSense - size: 5132 # 84.738
+ArgDeprel+PredLemmaSense - size: 4126 # 86.150
+LeftWord+PredLemmaSense - size: 9495 # 86.752
+DeprelPath+PredParentWord - size: 4398 # 87.272
+ArgDeprel+POSDepPath - size: 1501 # 87.417
+RightPOS+RightSiblingPOS - size: 602 # 87.604
+PredLemmaSense+RightSiblingPOS - size: 7665 # 87.419
+ArgWord+PredLemmaSense - size: 19264 # 87.732
+ArgFeats+PredLemmaSense - size: 17269 # 88.190
+ArgDeprel+ChildPOSSet - size: 799 # 88.419
+LeftSiblingPOS+RightSiblingPOS - size: 717 # 88.648
+Position+PredLemmaSense - size: 1902 # 88.794
+PredPOS+PredParentWord - size: 2110 # 89.002
+ArgWord+PredLemma - size: 18445 # 89.106 # 
+WordEmbeddingAvgArg
+WordEmbeddingCompArg
+WordEmbeddingDepPath

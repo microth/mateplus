@@ -1,0 +1,24 @@
+V
+PredPOS
+PredLemma
+PredLemmaSense
+ChildDepSet
+ArgWord
+ArgPOS
+ArgDeprel
+LeftWord
+LeftSiblingPOS
+RightSiblingWord
+DeprelPath
+POSDepPath
+ArgWord+PredLemmaSense
+ArgPOS+PredLemmaSense
+ArgPOS+RightSiblingPOS
+ArgFeats+LeftPOS
+LeftFeats+PredParentPOS
+ChildDepSet+POSDepPath
+ArgWord+PredLemma
+ChildPOSSet+PredDeprel # 
+WordEmbeddingAvgArg
+WordEmbeddingCompArg
+WordEmbeddingDepPath
