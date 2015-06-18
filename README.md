@@ -19,9 +19,11 @@ To run _mateplus_ on German text, additional preprocessing libraries need to be 
  * OpenNLP tokenizer (libraries from [`apache-opennlp-1.5.3*` and `de-token.bin`](http://www.mirrorservice.org/sites/ftp.apache.org//opennlp/))
  * The most recent _mateplus_ SRL model for German (June 2015), available from Google Drive [here][4]  
 
+If you want to run _mateplus_ on German text using [ParZu](https://github.com/rsennrich/parzu) as an external dependency parser (recommended for non-newswire text), please use [this model][5] from Google Drive.
+
 # Running mateplus  
 
-If copies of all required libraries and models are available in the subdirectories `lib/` and `models/`, respectively, mateplus can simply be executed as a standalone application using the script `scripts/parse.sh`. This script runs the mate-tools pipeline to preprocess a given input text file (assuming one sentence per line), and applies our state-of-the-art model for identifying and role labeling of semantic predicate-argument structures.
+If copies of all required libraries and models are available in the subdirectories `lib/` and `models/`, respectively, mateplus can simply be executed as a standalone application using the script `scripts/parse.sh`. This script runs the mate-tools pipeline to preprocess a given input text file (assuming one sentence per line), and applies our state-of-the-art model for identifying and role labeling of semantic predicate-argument structures. For German, please use the script `scripts/parse-ger.sh` (recommended for newswire text) or `scripts/parse-ger-ext.sh` (recommended for non-newswire text).
 
 It is also possible to apply the mateplus SRL model on already preprocessed text in the CoNLL 2009 format, using the Java class `se.lth.cs.srl.Parse`. Since mateplus is trained based on input preprocessed with mate-tools, however, we strongly recommend to use the complete pipeline to achieve best performance. 
 
@@ -31,6 +33,7 @@ It is also possible to apply the mateplus SRL model on already preprocessed text
 [2]: http://www.aclweb.org/anthology/D14-1045.pdf
 [3]: http://docs.google.com/uc?id=0B5aLxfs6OvZBUHRFOEcyLTMzWFE&export=download
 [4]: http://drive.google.com/uc?id=0B5aLxfs6OvZBalRtMWIwMkMzWFE&export=download
+[5]: http://drive.google.com/uc?id=0B5aLxfs6OvZBTEwyLXpwdTYxVFU&export=download
 
 If you are using mateplus in your work--and we highly recommend you do!--please cite the following publication:
 
@@ -39,6 +42,8 @@ Michael Roth and Kristian Woodsend (2014). Composition of word representations i
 Depending on which parts of the pipeline you are using, please also cite the following.
 
 ***German joint parsing model***: Bernd Bohnet, Joakim Nivre, Igor Boguslavsky, Richárd Farkas, Filip Ginter, Jan Hajic (2013). Joint morphological and syntactic analysis for richly inflected languages. Transactions of the Association for Computational Linguistics (TACL) 1:415--428
+
+***ParZu--The Zurich Dependency Parser***: Rico Sennrich, Martin Volk, Gerold Schneider (2013). Exploiting synergies between open resources for german dependency parsing, POS-tagging, and morphological analysis. In Proceedings of the International Conference on Recent Advances in Natural Language Processing (RANLP), Hissar, Bulgaria. 
 
 ***English parsing model***: Bernd Bohnet (2010). Very high accuracy and fast dependency parsing is not a contradiction. The 23rd International Conference on Computational Linguistics (COLING), Beijing, China. 
 
