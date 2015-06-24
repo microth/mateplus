@@ -82,7 +82,7 @@ public class PredicateIdentifier extends AbstractStep {
 			OUTER: for(Word w : heads) {
 				if(w.getLemma().equals("sein")) {
 					for(Word c : w.getChildren()) {
-						if(!c.getDeprel().startsWith("S")) {
+						if(c.getDeprel().equals("PD") || c.getDeprel().equals("pred")) {
 							s.makePredicate(c.getIdx());
 							break OUTER;
 						}
