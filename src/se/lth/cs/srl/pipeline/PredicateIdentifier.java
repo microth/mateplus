@@ -1,6 +1,7 @@
 package se.lth.cs.srl.pipeline;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map;
 import java.util.TreeMap;
@@ -66,11 +67,28 @@ public class PredicateIdentifier extends AbstractStep {
 	}
 
 	public void parse(Sentence s){
+		boolean containspreds = false;
 		for(int i=1,size=s.size();i<size;++i){
 			Integer label=classifyInstance(s,i);
 						
-			if(label.equals(POSITIVE) || (Language.getLanguage() instanceof German && s.get(i).getPOS().startsWith("VV")) )
+			if(label.equals(POSITIVE) || (Language.getLanguage() instanceof German && s.get(i).getPOS().startsWith("VV")) ) {
 				s.makePredicate(i);
+				containspreds=true;
+			}
+		}
+		
+		if(!containspreds && (Language.getLanguage() instanceof German)) {
+			Set<Word> heads = s.get(0).getChildren();
+			OUTER: for(Word w : heads) {
+				if(w.getLemma().equals("sein")) {
+					for(Word c : w.getChildren()) {
+						if(!c.getDeprel().startsWith("S")) {
+							s.makePredicate(c.getIdx());
+							break OUTER;
+						}
+					}
+				}
+			}
 		}
 	}
 
