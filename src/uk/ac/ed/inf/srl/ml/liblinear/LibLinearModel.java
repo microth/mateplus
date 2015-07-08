@@ -12,7 +12,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import liblinear.InvalidInputDataException;
+
+//import liblinear.InvalidInputDataException;
 import se.lth.cs.srl.Learn;
 import uk.ac.ed.inf.srl.ml.Model;
 
@@ -111,11 +112,16 @@ public class LibLinearModel implements Model {
 								"Last STDERR message: " + last_error + "\n");
 			}
 		} else {
-			try {
-                            String[] llargs=new String[]{"-s","0","-B","1.0",dataFile.toString(),outputFile.toString()};
-				liblinear.Linear.disableDebugOutput(); //We would like to have llargs=new String[]{"-q","-s","0",dataFile.toString(),outputFile.toString()};, but there is something buggy with the java implmentation.
-				liblinear.Train.main(llargs);
-			} catch (InvalidInputDataException e) {
+			try {							
+                String[] llargs=new String[]{"-s","0","-B","1.0",dataFile.toString(),outputFile.toString()};
+                
+                // HACK to ensure compatibility with different versions of liblinear (package name changed over time...) 
+                ClassLoader.getSystemClassLoader().loadClass("Linear").getMethod("disableDebugOutput").invoke(null);
+                ClassLoader.getSystemClassLoader().loadClass("Train").getMethod("main", String[].class).invoke(null, llargs);
+                
+				//Linear.disableDebugOutput(); //We would like to have llargs=new String[]{"-q","-s","0",dataFile.toString(),outputFile.toString()};, but there is something buggy with the java implmentation.
+				//Train.main(llargs);
+			} catch (Exception e) {
 				e.printStackTrace();
 				System.err.println("LibLinear java failed. Look into this.");
 				System.exit(1);
