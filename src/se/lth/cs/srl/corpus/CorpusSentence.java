@@ -124,4 +124,8 @@ public class CorpusSentence extends Sentence {
 		
 		return head;*/
 	}
+
+	public void setCorpusToNull() {
+		c = null;
+	}
 }

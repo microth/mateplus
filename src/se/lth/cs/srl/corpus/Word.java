@@ -42,6 +42,15 @@ public class Word implements Serializable{
 	
 	final int idx;
 	
+	public void freeMemory() {
+		//POS = null;
+		//Deprel = null;
+		//mySentence=null;
+		universalPOS = null;
+		Feats = null;
+		span = null;		
+	}
+	
 	//BOS constructor.
 	public Word(Sentence s) {
 		idx=0;

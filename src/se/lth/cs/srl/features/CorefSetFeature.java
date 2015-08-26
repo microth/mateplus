@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,7 @@ public class CorefSetFeature extends SetFeature {
 	boolean barg;
 	boolean bpred;
 	private Map<String, String> fe2semtype;
+	private Map<String, String> fe2superfe;
 
 	protected CorefSetFeature(FeatureName name,WordData attr, boolean pred, boolean arg, boolean usedForPredicateIdentification,String POSPrefix) {
 		super(name,true,usedForPredicateIdentification,POSPrefix);
@@ -35,11 +37,47 @@ public class CorefSetFeature extends SetFeature {
 		this.bpred=pred;
 		this.barg=arg;
 		if((Parse.parseOptions!=null && Parse.parseOptions.framenet) || 
-                   ((Learn.learnOptions!=null && Learn.learnOptions.framenet)))
-			fe2semtype = createMapping("/disk/scratch/mroth/framenet/fndata-1.5/");
+                   ((Learn.learnOptions!=null && Learn.learnOptions.framenet))) {
+			fe2semtype = createSemtypeMapping("/disk/scratch/mroth/framenet/fndata-1.5/");
+			fe2superfe = createSuperFEMapping("/disk/scratch/mroth/framenet/fndata-1.5/");
+		}
 	}
 	
-	private Map<String, String> createMapping(String string) {
+	private Map<String, String> createSuperFEMapping(String string) {
+		Map<String,String> retval = new HashMap<String, String>();
+		BufferedReader br = null;
+		try {			
+			br = new BufferedReader(new FileReader(string+"frRelation.xml"));
+			String line = "";
+			String subf=null;
+			String supf=null;
+			while((line=br.readLine())!=null) {
+		        if(line.contains("<frameRelation ")) {
+		        	subf = line.replaceAll(".*subFrameName=\"", "").replaceAll("\".*", "");
+		        	supf = line.replaceAll(".*superFrameName=\"", "").replaceAll("\".*", "");
+		        	continue;
+		        }
+				if(!line.contains("<FERelation ")) continue;
+				String sub = line.replaceAll(".*subFEName=\"", "").replaceAll("\".*", "");
+				String sup = line.replaceAll(".*superFEName=\"", "").replaceAll("\".*", ""); 
+				//if(!sub.equals(sup))
+				retval.put(subf+":"+sub,supf+":"+sup);
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} finally {
+			try {
+				br.close();
+			} catch(IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return retval;
+	}
+	
+	private Map<String, String> createSemtypeMapping(String string) {
 		Map<String,String> retval = new HashMap<String, String>();
 		BufferedReader br = null;
 		try {			
@@ -72,24 +110,6 @@ public class CorefSetFeature extends SetFeature {
 					System.exit(1);
 				}
 			}
-			
-			/* read all FE2FE relations
-			 * br = new BufferedReader(new FileReader(string+"frRelation.xml"));
-			String line = "";
-			String subf=null;
-			String supf=null;
-			while((line=br.readLine())!=null) {
-		        if(line.contains("<frameRelation ")) {
-		        	subf = line.replaceAll(".*subFrameName=\"", "").replaceAll("\".*", "");
-		        	supf = line.replaceAll(".*superFrameName=\"", "").replaceAll("\".*", "");
-		        	continue;
-		        }
-				if(!line.contains("<FERelation ")) continue;
-				String sub = line.replaceAll(".*subFEName=\"", "").replaceAll("\".*", "");
-				String sup = line.replaceAll(".*superFEName=\"", "").replaceAll("\".*", ""); 
-				//if(!sub.equals(sup))
-				retval.put(subf+":"+sub,supf+":"+sup);
-			}*/
 		} catch(IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -193,39 +213,29 @@ public class CorefSetFeature extends SetFeature {
 				}
 			}
 		}
-		/*if(allWords){
-			for(int i=1,size=s.size();i<size;++i){
-				if(doExtractFeatures(s.get(i)))
-					for(Word child:s.get(i).getChildren()){
-						addMap(child.getAttr(attr));
-					}
-			}
-		} else {
-			for(Predicate pred:s.getPredicates()){
-				if(doExtractFeatures(pred))
-					for(Word child:pred.getChildren())
-						addMap(child.getAttr(attr));
-			}
-		}*/
+
 	}
 
-	private String semtype(String string) {
+	private String semtype(String role) {
 		if((Parse.parseOptions!=null && !Parse.parseOptions.framenet) || 
                    ((Learn.learnOptions!=null && !Learn.learnOptions.framenet)))
-                    return string;
+                    return role;
 
-		String retval = fe2semtype.containsKey(string)?fe2semtype.get(string):null;
-		//Set<String> superset = new TreeSet<String>();
-		/*while(fe2semtype.containsKey(retval)) {
-			// hierarchy is cyclic, skip this role
-			String s = fe2superfe.get(retval);
-			if(superset.contains(s))
-				return string;
-						
-			retval = fe2superfe.get(retval);
-			superset.add(retval);
-		}*/
-		//if(!string.equals(retval)) System.err.println(string + " -> " + retval);
-		return retval;
+		Set<String> visited = new HashSet<String>();
+		String type = fe2semtype.containsKey(role)?fe2semtype.get(role):null;
+		while(type==null && fe2superfe.containsKey(role)) {
+			// hierarchy is cyclic, skip if already visited
+			if(visited.contains(role))
+				break;
+			
+			// check next level in the hierarchy
+			role = fe2superfe.get(role);			
+			if(fe2semtype.containsKey(role))
+				type = fe2semtype.get(role);
+
+			visited.add(role);
+		}
+		if(type!=null) System.err.println(role + " -> " + type);
+		return type;
 	}
 }
