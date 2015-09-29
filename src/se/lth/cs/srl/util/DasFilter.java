@@ -172,14 +172,14 @@ public class DasFilter {
 							span[0] = s.get(begin1);
 							span[1] = s.get(end1);
 
-							for (int x = oldspan[0].getIdx(); x <= oldspan[1]
+							/*for (int x = oldspan[0].getIdx(); x <= oldspan[1]
 									.getIdx(); x++)
 								System.out.print(s.get(x).getForm() + " ");
 							System.out.print("->");
 							for (int x = span[0].getIdx(); x <= span[1]
 									.getIdx(); x++)
 								System.out.print(" " + s.get(x).getForm());
-							System.out.println();
+							System.out.println();*/
 
 							spans1.add(i, span);
 						}

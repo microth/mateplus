@@ -48,8 +48,9 @@ public class FrameNetXMLWriter implements SentenceWriter {
 
 	public void write(Sentence s) {
 		StringBuffer text = new StringBuffer();
+		/** hard-coded fix for test set starting with "Simply" **/
 		if (s.get(1).getForm().equals("Simply")) {
-			System.err.println("XXX");
+			//System.err.println("XXX");
 			text.append("  ");
 		}
 		for (int i = 1; i < s.size(); i++) {
