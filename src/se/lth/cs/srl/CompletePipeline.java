@@ -3,19 +3,38 @@ package se.lth.cs.srl;
 import is2.data.SentenceData09;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import edu.stanford.nlp.dcoref.CorefChain;
+import edu.stanford.nlp.dcoref.CorefChain.CorefMention;
+import edu.stanford.nlp.dcoref.CorefCoreAnnotations.CorefChainAnnotation;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.util.CoreMap;
+import se.lth.cs.srl.corpus.Corpus;
+import se.lth.cs.srl.corpus.CorpusSentence;
+import se.lth.cs.srl.corpus.Predicate;
 import se.lth.cs.srl.corpus.Sentence;
 import se.lth.cs.srl.corpus.StringInText;
+import se.lth.cs.srl.corpus.Word;
 import se.lth.cs.srl.io.ANNWriter;
 import se.lth.cs.srl.io.CoNLL09Writer;
 import se.lth.cs.srl.io.SentenceWriter;
@@ -31,6 +50,7 @@ import se.lth.cs.srl.preprocessor.HybridPreprocessor;
 import se.lth.cs.srl.preprocessor.PipelinedPreprocessor;
 import se.lth.cs.srl.preprocessor.Preprocessor;
 import se.lth.cs.srl.util.ChineseDesegmenter;
+import se.lth.cs.srl.util.ExternalProcesses;
 import se.lth.cs.srl.util.FileExistenceVerifier;
 import se.lth.cs.srl.util.Util;
 
@@ -40,10 +60,11 @@ public class CompletePipeline {
 
 	public Preprocessor pp;
 	public SemanticRoleLabeler srl;
-
+	
 	public static CompletePipeline getCompletePipeline(
 			FullPipelineOptions options) throws ZipException, IOException,
-			ClassNotFoundException {
+			ClassNotFoundException {		
+		
 		Preprocessor pp = Language.getLanguage().getPreprocessor(options);
 		Parse.parseOptions = options.getParseOptions();
 		SemanticRoleLabeler srl;
@@ -53,7 +74,7 @@ public class CompletePipeline {
 			ZipFile zipFile = new ZipFile(Parse.parseOptions.modelFile);
 			if (Parse.parseOptions.skipPI) {
 				srl = Pipeline.fromZipFile(zipFile, new Step[] { Step.pd,
-						Step.ai, Step.ac });// ,Step.po,Step.ao});
+						Step.ai, Step.ac });
 			} else {
 				srl = Pipeline.fromZipFile(zipFile);
 			}
@@ -119,6 +140,7 @@ public class CompletePipeline {
 		}
 
 		CompletePipeline pipeline = getCompletePipeline(options);
+		
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				new FileInputStream(options.input), Charset.forName("UTF-8")));
 		SentenceWriter writer = null;
@@ -131,7 +153,10 @@ public class CompletePipeline {
 		long start = System.currentTimeMillis();
 		int senCount;
 
-		if (options.loadPreprocessorWithTokenizer) {
+		if(options.glovedir!=null) {
+			senCount = parseFullDocument(options, pipeline, in, writer);
+		}
+		else if (options.loadPreprocessorWithTokenizer) {
 			senCount = parseNonSegmentedLineByLine(options, pipeline, in,
 					writer);
 		} else {
@@ -151,6 +176,126 @@ public class CompletePipeline {
 
 	}
 
+	private static int parseFullDocument (
+			CompletePipelineCMDLineOptions options, CompletePipeline pipeline,
+			BufferedReader in, SentenceWriter writer) throws IOException,
+			Exception {
+		
+		/** initialize **/
+		Properties props = new Properties();
+		props.put("annotators",
+				"tokenize, ssplit, pos, lemma, ner, parse, dcoref");
+		props.put("dcoref.sievePasses", "MarkRole," + "DiscourseMatch,"
+				+ "ExactStringMatch," + "RelaxedExactStringMatch,"
+				+ "PreciseConstructs," + "StrictHeadMatch1,"
+				+ "StrictHeadMatch2," + "StrictHeadMatch3,"
+				+ "StrictHeadMatch4," + "RelaxedHeadMatch");
+		StanfordCoreNLP stanfordpipeline = new StanfordCoreNLP(props);		
+		ExternalProcesses glove = new ExternalProcesses(options.glovedir);
+		
+		/** read full text **/
+		int senCount = 0;
+		String str;		
+		StringBuffer text = new StringBuffer();
+		while ((str = in.readLine()) != null) {
+			text.append(str);
+			text.append("\n");
+		}
+		
+		/** document-level preprocessing **/
+		Annotation document = new Annotation(text.toString());
+		stanfordpipeline.annotate(document);
+
+		Map<String, Double[]> word2vecs = glove.createvecs(document);
+		
+		Corpus c = new Corpus("tmp");
+
+		/** sentence-level preprocessing **/
+		for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
+			StringBuffer posOutput = new StringBuffer();
+
+			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
+				if (posOutput.length() > 0) {
+					posOutput.append(" ");
+				}
+				posOutput.append(token.word());
+				posOutput.append("_");
+				posOutput.append(token.tag());
+			}
+
+			String parse = ExternalProcesses.runProcess("nc " + options.mstserver, posOutput.toString());
+			parse = parse.replaceAll("-\t-", "_\t_\n@#").replaceAll("@#\t", "")
+					.replaceAll("@#", "");
+
+			String[] lines = parse.split("\n");
+			String[] words = new String[lines.length + 1];
+			String[] lemmas = new String[lines.length + 1];
+			String[] tags = new String[lines.length + 1];
+			String[] morphs = new String[lines.length + 1];
+			int[] heads = new int[lines.length];
+			String[] deprels = new String[lines.length];
+
+			for (int i = 1; i < words.length; i++) {
+				String[] parts = lines[i - 1].split("\t");
+				words[i] = sentence.get(TokensAnnotation.class).get(i - 1)
+						.word();
+				tags[i] = sentence.get(TokensAnnotation.class).get(i - 1).tag();
+				lemmas[i] = sentence.get(TokensAnnotation.class).get(i - 1)
+						.lemma();
+				morphs[i] = "_";
+				heads[i - 1] = Integer.parseInt(parts[6]);
+				deprels[i - 1] = parts[7];
+			}
+			Sentence sen = new Sentence(words, lemmas, tags, morphs);
+			sen.setHeadsAndDeprels(heads, deprels);
+		
+			/* add labeled predicates from SEMAFOR */
+			String json = ExternalProcesses.runProcess("nc " + options.semaforserver, parse);
+			Pattern pred_frame = Pattern
+					.compile("\\{\"target\":\\{\"name\":\"([A-Za-z_]*)\",\"spans\":\\[\\{\"start\":([0-9]*),\"");
+			Matcher m = pred_frame.matcher(json);
+			while (m.find()) {
+				String frame = m.group(1);
+				int index = Integer.parseInt(m.group(2));
+				System.out.println(index + "\t" + frame);
+
+				sen.makePredicate(index + 1);
+				((Predicate) sen.get(index + 1)).setSense(frame);
+			}
+			
+			for(Word w : sen)
+				if(word2vecs.containsKey(w.getForm().toLowerCase()))
+					w.setRep(word2vecs.get(w.getForm().toLowerCase()));
+
+			new CorpusSentence(sen, c);
+		}
+
+		/* add coref output to corpus */
+		Map<Integer, CorefChain> coref = document
+				.get(CorefChainAnnotation.class);
+		int num = 1;
+		for (Map.Entry<Integer, CorefChain> entry : coref.entrySet()) {
+			CorefChain cc = entry.getValue();
+			// skip singleton mentions
+			if (cc.getMentionsInTextualOrder().size() == 1)
+				continue;
+
+			for (CorefMention m : cc.getMentionsInTextualOrder()) {
+				c.addMention(c.get(m.sentNum - 1), m.headIndex, num);
+			}
+			num++;
+		}
+
+		for (Sentence sen : c) {
+			pipeline.srl.parseSentence(sen);
+			senCount++;
+			if (senCount % 100 == 0)
+				System.out.println("Processing sentence " + senCount);
+			writer.write(sen);
+		}
+		return senCount;
+	}
+	
 	private static int parseNonSegmentedLineByLine(
 			CompletePipelineCMDLineOptions options, CompletePipeline pipeline,
 			BufferedReader in, SentenceWriter writer) throws IOException,

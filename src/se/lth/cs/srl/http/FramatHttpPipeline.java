@@ -55,6 +55,8 @@ import se.lth.cs.srl.options.HttpOptions;
 import se.lth.cs.srl.pipeline.Pipeline;
 import se.lth.cs.srl.pipeline.Reranker;
 import se.lth.cs.srl.pipeline.Step;
+import se.lth.cs.srl.util.ExternalProcess;
+import se.lth.cs.srl.util.ExternalProcesses;
 import se.lth.cs.srl.util.FileExistenceVerifier;
 import se.lth.cs.srl.util.Sentence2RDF;
 
@@ -64,14 +66,18 @@ public class FramatHttpPipeline extends AbstractPipeline {
 	private final ImageCache imageCache;
 	private final DefaultHandler defaultHandler;
 	private final StanfordCoreNLP pipeline;
-	private Map<String, Double[]> initialvecs = null;
-	private Map<String, Double[]> squaredgrads = null;
-	private Map<String, Integer> vocab = null;
-	private String glovedir = null;
+	
+	private ExternalProcesses glove = null;
+	private String semafor = null;
+	private String mstparser = null;
 	
 	public FramatHttpPipeline(SemanticRoleLabeler srl, ImageCache imageCache,
 			L l, int sentenceMaxLength, HttpOptions options) {
 		super(sentenceMaxLength, options);
+		
+		semafor = "nc " + options.semaforserver;
+		mstparser = "nc " + options.mstserver;
+		
 		this.srl = srl;
 		this.defaultHandler = new DefaultHandler(l, this);
 		this.imageCache = imageCache;
@@ -86,54 +92,10 @@ public class FramatHttpPipeline extends AbstractPipeline {
 				+ "StrictHeadMatch4," + "RelaxedHeadMatch");
 
 		pipeline = new StanfordCoreNLP(props);
-		if(options.glovedir!=null) {
-			System.err.println("Reading initial word vectors ...");
-			initialvecs = new HashMap<String, Double[]>();
-			squaredgrads = new HashMap<String, Double[]>();
-			vocab = new HashMap<String, Integer>();
-			
-			BufferedReader br1 = null;
-			BufferedReader br2 = null;
-			BufferedReader br3 = null;
-			try {
-				br1 = new BufferedReader(new FileReader(new File(options.glovedir+"/vectors.txt")));
-				br2 = new BufferedReader(new FileReader(new File(options.glovedir+"/gradsq.txt")));
-				br3 = new BufferedReader(new FileReader(new File(options.glovedir+"/vocab.txt")));
-				String line = "";
-				while((line = br1.readLine())!=null) {
-					String[] parts = line.split(" ");
-					Double[] vec = new Double[parts.length-1];
-					for(int i=1; i<parts.length; i++)
-						vec[i-1] = Double.parseDouble(parts[i]);
-					initialvecs.put(parts[0], vec);
-				}
-				
-				while((line = br2.readLine())!=null) {
-					String[] parts = line.split(" ");
-					Double[] vec = new Double[parts.length-1];
-					for(int i=1; i<parts.length; i++)
-						vec[i-1] = Double.parseDouble(parts[i]);
-					squaredgrads.put(parts[0], vec);
-				}
-				
-				while((line = br3.readLine())!=null) {
-					String[] parts = line.split(" ");
-					vocab.put(parts[0], Integer.parseInt(parts[1]));
-				}
-			} catch(IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			} finally {
-				try {
-					br1.close();
-					br2.close();
-					br3.close();
-				} catch(IOException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
-			}
-		}
+
+		if(options.glovedir!=null)
+			glove = new ExternalProcesses(options.glovedir);
+		
 	}
 
 	@Override
@@ -223,8 +185,8 @@ public class FramatHttpPipeline extends AbstractPipeline {
 		pipeline.annotate(document);
 
 		Map<String, Double[]> word2vecs = null; 
-		if(initialvecs!=null)
-			createvecs(document);
+		if(glove!=null)
+			word2vecs = glove.createvecs(document);
 		
 		Corpus c = new Corpus("tmp");
 
@@ -246,7 +208,7 @@ public class FramatHttpPipeline extends AbstractPipeline {
 				posOutput.append(token.tag());
 			}
 
-			String parse = runProcess("nc stkilda 12345", posOutput.toString());
+			String parse = ExternalProcesses.runProcess(mstparser, posOutput.toString());
 			parse = parse.replaceAll("-\t-", "_\t_\n@#").replaceAll("@#\t", "")
 					.replaceAll("@#", "");
 
@@ -273,7 +235,7 @@ public class FramatHttpPipeline extends AbstractPipeline {
 			sen.setHeadsAndDeprels(heads, deprels);
 
 			/* add labeled predicates from SEMAFOR */
-			String json = runProcess("nc stkilda 8043", parse);
+			String json = ExternalProcesses.runProcess(semafor, parse);
 			Pattern pred_frame = Pattern
 					.compile("\\{\"target\":\\{\"name\":\"([A-Za-z_]*)\",\"spans\":\\[\\{\"start\":([0-9]*),\"");
 			Matcher m = pred_frame.matcher(json);
@@ -352,152 +314,7 @@ public class FramatHttpPipeline extends AbstractPipeline {
 		return new StringPair(httpResponse, content_type);
 	}
 
-	private Map<String, Double[]> createvecs(Annotation document) {
-		Map<String, Double[]> retval = new HashMap<String, Double[]>();
-		Set<String> localvocab = new TreeSet<String>();
-		
-		StringBuffer text = new StringBuffer();
-		for (CoreMap sentence : document.get(SentencesAnnotation.class)) {
-			for (CoreLabel token : sentence.get(TokensAnnotation.class)) {
-				if(token.index()>0) text.append(" ");
-				text.append(token.word().toLowerCase());
-				localvocab.add(token.word().toLowerCase());
-			}
-			text.append("\n");
-		}
-		
-		try {
-			// write temporary text file
-			File tmp = File.createTempFile("glv", ".txt");
-			BufferedWriter bw = null;
-			BufferedWriter bw1 = null;
-			BufferedWriter bw2 = null;
-			BufferedWriter bw3 = null;
-			try {			
-				bw = new BufferedWriter(new FileWriter(tmp));
-				bw1= new BufferedWriter(new FileWriter(new File(tmp.toString()+".init")));
-				bw2= new BufferedWriter(new FileWriter(new File(tmp.toString()+".grad")));
-				bw3= new BufferedWriter(new FileWriter(new File(tmp.toString()+".vocab")));
-						
-				bw.write(text.toString());
-				for(String s : localvocab) {
-					if(initialvecs.containsKey(s)) {
-						bw1.write(s);
-						for(Double d : initialvecs.get(s)) {
-							bw1.write(" ");
-							bw1.write(d.toString());
-						}
-						bw1.newLine();
-						
-						bw2.write(s);
-						for(Double d : squaredgrads.get(s)) {
-							bw2.write(" ");
-							bw2.write(d.toString());
-						}
-						bw2.newLine();
-						
-						bw3.write(s);
-						bw3.write(" ");
-						bw3.write(new Integer(vocab.get(s)).toString());
-						bw3.newLine();
-					}
-				}
-			} catch(IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			} finally {
-				try {
-					bw.close();
-					bw1.close();
-					bw2.close();
-					bw3.close();
-				} catch(IOException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
-			}		
-			
-			// execute glove
-			Process p;
-			try {
-				p = Runtime.getRuntime().exec(new String[]{glovedir+"/processtmp.sh", tmp.toString()});
-				if (p.waitFor() != 0) {
-					System.err.println("Could not run GloVe script!");
-					System.exit(1);
-				}			
-			} catch(Exception e) {
-				e.printStackTrace();
-				System.exit(1);
-			}
-			
-			// read created vectors
-			BufferedReader br = null;
-			try {
-				br = new BufferedReader(new FileReader(tmp.toString()+".vectors"));
-				String line = "";
-				boolean first = true;
-				while((line = br.readLine())!=null) {
-					String[] parts = line.split(" ");
-					Double[] vec = new Double[parts.length-1];
-					for(int i=1; i<parts.length; i++) {
-						vec[i-1] = Double.parseDouble(parts[i]);
-					}
-					if(first) {
-						System.err.println(parts[0] + "\t" + vec.toString());
-						first = false;
-					}
-					retval.put(parts[0], vec);
-				}
-			} catch(IOException e) {
-				e.printStackTrace();
-				System.exit(1);
-			} finally {
-				try {
-					br.close();
-				} catch(IOException e) {
-					e.printStackTrace();
-					System.exit(1);
-				}
-			}
-			
-		} catch(IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}	
-		return retval;
-	}
 
-	private String runProcess(String command, String text) {
-		StringBuffer retval = new StringBuffer();
-
-		try {
-			Process p = Runtime.getRuntime().exec(command);
-			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
-					p.getOutputStream()));
-			BufferedReader br = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
-
-			bw.write(text);
-			bw.newLine();
-			bw.close();
-
-			if (p.waitFor() == 0) {
-				String line = "";
-				while ((line = br.readLine()) != null) {
-					retval.append(line);
-				}
-			} else {
-				System.err.println("Parsing process threw error message ...");
-				System.exit(1);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		return retval.toString();
-	}
 
 	private static final HashSet<String> styleSheetArgs;
 	static {
