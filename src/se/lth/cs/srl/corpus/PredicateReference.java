@@ -23,8 +23,8 @@ public class PredicateReference implements Serializable {
 			map.put(prefix, new PredicateMap(prefix));
 		}
 
-		if ((Parse.parseOptions != null && Parse.parseOptions.framenet)
-				|| ((Learn.learnOptions != null && Learn.learnOptions.framenet)))
+		if ((Parse.parseOptions != null && Parse.parseOptions.framenetdir != null)
+				|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir != null)))
 			all = true;
 	}
 
