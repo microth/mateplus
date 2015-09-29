@@ -85,6 +85,8 @@ public abstract class Language {
 			Tokenizer tokenizer = (options.loadPreprocessorWithTokenizer ? getTokenizer(options.tokenizer)
 					: null);
 			pp = new ExternalPreprocessor(tokenizer, options.parser);
+		} else if (options.mstserver != null) {
+			pp = null;
 		} else {
 			Tokenizer tokenizer = (options.loadPreprocessorWithTokenizer ? getTokenizer(options.tokenizer)
 					: null);
