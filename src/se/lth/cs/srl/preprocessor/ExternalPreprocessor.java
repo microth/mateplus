@@ -7,9 +7,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Map;
+import java.util.Properties;
 
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+import edu.stanford.nlp.util.CoreMap;
 import is2.data.SentenceData09;
 import is2.tools.Tool;
+import se.lth.cs.srl.corpus.Corpus;
+import se.lth.cs.srl.corpus.Sentence;
 import se.lth.cs.srl.languages.Language;
 import se.lth.cs.srl.preprocessor.tokenization.Tokenizer;
 import se.lth.cs.srl.util.Util;
@@ -52,6 +62,7 @@ public class ExternalPreprocessor extends Preprocessor {
 		return parser != null;
 	}
 
+	
 	class ExternalParser {
 		String parser;
 
