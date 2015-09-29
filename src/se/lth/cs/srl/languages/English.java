@@ -38,9 +38,9 @@ public class English extends Language {
 			if (proposition.containsKey(word)) {
 				String label = proposition.get(word);
 				if ((Parse.parseOptions != null
-						&& Parse.parseOptions.globalFeats && Parse.parseOptions.framenet)
+						&& Parse.parseOptions.globalFeats && Parse.parseOptions.framenetdir != null)
 						|| ((Learn.learnOptions != null
-								&& Learn.learnOptions.globalFeats && Learn.learnOptions.framenet))
+								&& Learn.learnOptions.globalFeats && Learn.learnOptions.framenetdir != null))
 						|| CALSPattern.matcher(label).matches())
 					ret.append(" " + label);
 			}

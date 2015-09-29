@@ -40,9 +40,9 @@ public class ArgumentClassifier extends ArgumentStep {
 		super(fs);
 		this.argLabels = argLabels;
 		if (Parse.parseOptions != null && Parse.parseOptions.framenetdir != null)
-			roles = createLexicon(Parse.parseOptions.framenetdir);
+			roles = createLexicon(Parse.parseOptions.framenetdir + "/frame/");
 		else if (Learn.learnOptions != null && Learn.learnOptions.framenetdir != null)
-			roles = createLexicon(Learn.learnOptions.framenetdir);
+			roles = createLexicon(Learn.learnOptions.framenetdir + "/frame/");
 	}
 
 	private Map<String, List<String>> createLexicon(String lexicondir) {

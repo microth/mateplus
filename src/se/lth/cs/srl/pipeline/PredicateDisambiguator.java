@@ -46,13 +46,10 @@ public class PredicateDisambiguator implements PipelineStep {
 		this.featureSet = featureSet;
 		this.predicateReference = predicateReference;
 
-		if ((Parse.parseOptions != null && Parse.parseOptions.framenet)
-				|| ((Learn.learnOptions != null && Learn.learnOptions.framenet))) {
-			lexicon = createLexicon("/disk/scratch/mroth/framenet/fndata-1.5/frame/");
-
-		} else {
-
-		}
+		if (Parse.parseOptions != null && Parse.parseOptions.framenetdir != null)
+			lexicon = createLexicon(Parse.parseOptions.framenetdir+"/frame/");
+		else if (Learn.learnOptions != null && Learn.learnOptions.framenetdir != null)
+			lexicon = createLexicon(Learn.learnOptions.framenetdir+"/frame/");
 	}
 
 	private Map<String, List<String>> createLexicon(String lexicondir) {
@@ -106,8 +103,8 @@ public class PredicateDisambiguator implements PipelineStep {
 			}
 
 			if (POSPrefix == null
-					&& (Parse.parseOptions != null && Parse.parseOptions.framenet)
-					|| ((Learn.learnOptions != null && Learn.learnOptions.framenet)))
+					&& (Parse.parseOptions != null && Parse.parseOptions.framenetdir == null)
+					|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir == null)))
 				POSPrefix = featureSet.POSPrefixes[0];
 
 			if (POSPrefix == null) {
@@ -129,8 +126,8 @@ public class PredicateDisambiguator implements PipelineStep {
 					}
 
 					// no framenet
-					if ((Parse.parseOptions != null && !Parse.parseOptions.framenet)
-							|| ((Learn.learnOptions != null && !Learn.learnOptions.framenet))) {
+					if ((Parse.parseOptions != null && Parse.parseOptions.framenetdir != null)
+							|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir != null))) {
 						Integer label = m.classify(indices, nonbinFeats);
 						sense = predicateReference.getSense(lemma, POSPrefix,
 								label);

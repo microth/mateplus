@@ -28,7 +28,7 @@ public class FeatureSelectionOptions {
 	public boolean quadratic = false;
 	public boolean includeFeats = false;
 	public boolean skipUnknownPredicates = false;
-	public boolean framenet = false;
+	public String framenetdir = null;
 	public boolean coref = false;
 
 	public FeatureSelectionOptions(String[] args) {
@@ -39,7 +39,7 @@ public class FeatureSelectionOptions {
 		while (ai < args.length) {
 			if (args[ai].equals("-framenet")) {
 				ai++;
-				framenet = true;
+				framenetdir = args[ai++];
 			}
 			if (args[ai].equals("-prefix")) {
 				ai++;
@@ -120,7 +120,7 @@ public class FeatureSelectionOptions {
 		options.tempDir = tempDir;
 		options.deterministicPipeline = deterministicPipeline;
 		options.liblinearBinary = llbinary;
-		options.framenet = framenet;
+		options.framenetdir = framenetdir;
 		return options;
 	}
 
