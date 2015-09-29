@@ -38,10 +38,13 @@ public class CorefSetFeature extends SetFeature {
 		this.attr = attr;
 		this.bpred = pred;
 		this.barg = arg;
-		if ((Parse.parseOptions != null && Parse.parseOptions.framenet)
-				|| ((Learn.learnOptions != null && Learn.learnOptions.framenet))) {
-			fe2semtype = createSemtypeMapping("/disk/scratch/mroth/framenet/fndata-1.5/");
-			fe2superfe = createSuperFEMapping("/disk/scratch/mroth/framenet/fndata-1.5/");
+		if (Parse.parseOptions != null && Parse.parseOptions.framenetdir != null) {
+			fe2semtype = createSemtypeMapping(Parse.parseOptions.framenetdir);
+			fe2superfe = createSuperFEMapping(Parse.parseOptions.framenetdir);
+		} else if(Learn.learnOptions != null && Learn.learnOptions.framenetdir != null) {
+			fe2semtype = createSemtypeMapping(Learn.learnOptions.framenetdir);
+			fe2superfe = createSuperFEMapping(Learn.learnOptions.framenetdir);
+			
 		}
 	}
 
@@ -254,8 +257,8 @@ public class CorefSetFeature extends SetFeature {
 	}
 
 	private String semtype(String role) {
-		if ((Parse.parseOptions != null && !Parse.parseOptions.framenet)
-				|| ((Learn.learnOptions != null && !Learn.learnOptions.framenet)))
+		if ((Parse.parseOptions != null && Parse.parseOptions.framenetdir==null)
+				|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir==null)))
 			return role;
 
 		Set<String> visited = new HashSet<String>();
