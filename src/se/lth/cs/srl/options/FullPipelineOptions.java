@@ -32,9 +32,7 @@ public abstract class FullPipelineOptions {
 	public boolean printANN = false;
 	public boolean hybrid = false;
 	public boolean external = false;
-	public String initialvectors = null;
-	public String initialgradients = null;
-	public String vocab = null;
+	public String glovedir = null;
 
 	public static String NULL_LANGUAGE_NAME = "Unk";
 
@@ -151,15 +149,9 @@ public abstract class FullPipelineOptions {
 		} else if (args[ai].equals("-cores")) {
 			ai++;
 			cores = Integer.parseInt(args[ai++]);
-		} else if (args[ai].equals("-vectors")) {
+		} else if (args[ai].equals("-glove")) {
 			ai++;
-			initialvectors  = args[ai++];
-		} else if (args[ai].equals("-gradsq")) {
-			ai++;
-			initialgradients = args[ai++];
-		} else if (args[ai].equals("-vocab")) {
-			ai++;
-			vocab = args[ai++];
+			glovedir = args[ai++];
 		}
 		return ai;
 	}
