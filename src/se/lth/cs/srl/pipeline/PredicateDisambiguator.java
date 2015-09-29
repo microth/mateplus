@@ -103,8 +103,8 @@ public class PredicateDisambiguator implements PipelineStep {
 			}
 
 			if (POSPrefix == null
-					&& (Parse.parseOptions != null && Parse.parseOptions.framenetdir == null)
-					|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir == null)))
+					&& (Parse.parseOptions != null && Parse.parseOptions.framenetdir != null)
+					|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir != null)))
 				POSPrefix = featureSet.POSPrefixes[0];
 
 			if (POSPrefix == null) {
@@ -126,8 +126,8 @@ public class PredicateDisambiguator implements PipelineStep {
 					}
 
 					// no framenet
-					if ((Parse.parseOptions != null && Parse.parseOptions.framenetdir != null)
-							|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir != null))) {
+					if ((Parse.parseOptions != null && Parse.parseOptions.framenetdir == null)
+							|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir == null))) {
 						Integer label = m.classify(indices, nonbinFeats);
 						sense = predicateReference.getSense(lemma, POSPrefix,
 								label);
