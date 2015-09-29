@@ -39,9 +39,10 @@ public class ArgumentClassifier extends ArgumentStep {
 	public ArgumentClassifier(FeatureSet fs, List<String> argLabels) {
 		super(fs);
 		this.argLabels = argLabels;
-		if ((Parse.parseOptions != null && Parse.parseOptions.framenet)
-				|| ((Learn.learnOptions != null && Learn.learnOptions.framenet)))
-			roles = createLexicon("/disk/scratch/mroth/framenet/fndata-1.5/frame/");
+		if (Parse.parseOptions != null && Parse.parseOptions.framenetdir != null)
+			roles = createLexicon(Parse.parseOptions.framenetdir);
+		else if (Learn.learnOptions != null && Learn.learnOptions.framenetdir != null)
+			roles = createLexicon(Learn.learnOptions.framenetdir);
 	}
 
 	private Map<String, List<String>> createLexicon(String lexicondir) {
@@ -178,8 +179,8 @@ public class ArgumentClassifier extends ArgumentStep {
 				Map<Word, String> argMap = pred.getArgMap();
 				/** if(pred.getCandSenses()<2) { **/
 				for (Word arg : argMap.keySet()) {
-					if ((Parse.parseOptions != null && !Parse.parseOptions.framenet)
-							|| ((Learn.learnOptions != null && !Learn.learnOptions.framenet))) {
+					if ((Parse.parseOptions != null && Parse.parseOptions.framenetdir !=null)
+							|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir!=null))) {
 						Integer label = super.classifyInstance(pred, arg);
 						if (!argLabels.get(label).equals(argMap.get(arg)))
 							changes++;

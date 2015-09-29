@@ -35,7 +35,7 @@ public class LearnOptions extends Options {
 	public boolean deterministicPipeline = true;
 	public boolean deterministicReranker = true;
 
-	public boolean framenet = false;
+	public String framenetdir = null;
 
 	public boolean global_insertGoldMapForTrain = true;
 	public int global_numberOfCrossTrain = 5;
@@ -71,7 +71,7 @@ public class LearnOptions extends Options {
 			trainReranker = true;
 		} else if (args[ai].equals("-framenet")) {
 			ai++;
-			framenet = true;
+			framenetdir = args[ai++];
 		} else if (args[ai].equals("-partitions")) {
 			ai++;
 			global_numberOfCrossTrain = Integer.parseInt(args[ai]);

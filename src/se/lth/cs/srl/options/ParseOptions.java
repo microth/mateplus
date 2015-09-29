@@ -18,7 +18,7 @@ public class ParseOptions extends Options {
 	public boolean skipPD = false; // " predicate disambiguation
 	public boolean useReranker = false;
 
-	public boolean framenet = false;
+	public String framenetdir = null;
 	public boolean printRDF = false;
 	public boolean printANN = false;
 	public boolean printXML = false;
@@ -45,7 +45,7 @@ public class ParseOptions extends Options {
 		}
 		if (args[ai].equals("-framenet")) {
 			ai++;
-			framenet = true;
+			framenetdir = args[ai++];
 		}
 		if (args[ai].equals("-nopi")) {
 			ai++;

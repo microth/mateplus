@@ -32,8 +32,13 @@ public abstract class FullPipelineOptions {
 	public boolean printANN = false;
 	public boolean hybrid = false;
 	public boolean external = false;
+	
+	// links to external tools/servers/resources
 	public String glovedir = null;
-
+	public String mstserver = null;
+	public String semaforserver = null;
+	public String framenetdir = null;
+	
 	public static String NULL_LANGUAGE_NAME = "Unk";
 
 	public ParseOptions getParseOptions() {
@@ -152,6 +157,15 @@ public abstract class FullPipelineOptions {
 		} else if (args[ai].equals("-glove")) {
 			ai++;
 			glovedir = args[ai++];
+		} else if (args[ai].equals("-mst")) {
+			ai++;
+			mstserver = args[ai++];
+		} else if (args[ai].equals("-semafor")) {
+			ai++;
+			semaforserver = args[ai++];
+		} else if (args[ai].equals("-framenet")) {
+			ai++;
+			framenetdir = args[ai++];
 		}
 		return ai;
 	}
