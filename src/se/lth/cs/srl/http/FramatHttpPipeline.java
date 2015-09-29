@@ -55,7 +55,6 @@ import se.lth.cs.srl.options.HttpOptions;
 import se.lth.cs.srl.pipeline.Pipeline;
 import se.lth.cs.srl.pipeline.Reranker;
 import se.lth.cs.srl.pipeline.Step;
-import se.lth.cs.srl.util.ExternalProcess;
 import se.lth.cs.srl.util.ExternalProcesses;
 import se.lth.cs.srl.util.FileExistenceVerifier;
 import se.lth.cs.srl.util.Sentence2RDF;

@@ -1,5 +1,6 @@
 package se.lth.cs.srl.languages;
 
+import is2.data.SentenceData09;
 import is2.lemmatizer.Lemmatizer;
 import is2.parser.Parser;
 import is2.tag.Tagger;
@@ -86,7 +87,25 @@ public abstract class Language {
 					: null);
 			pp = new ExternalPreprocessor(tokenizer, options.parser);
 		} else if (options.mstserver != null) {
-			pp = null;
+			pp = new Preprocessor() {
+				
+				@Override
+				protected SentenceData09 preprocess(SentenceData09 sentence) {
+					return sentence;
+				}
+				
+				@Override
+				public boolean hasParser() {
+					// TODO Auto-generated method stub
+					return true;
+				}
+				
+				@Override
+				public StringBuilder getStatus() {
+					// TODO Auto-generated method stub
+					return new StringBuilder();
+				}
+			};
 		} else {
 			Tokenizer tokenizer = (options.loadPreprocessorWithTokenizer ? getTokenizer(options.tokenizer)
 					: null);

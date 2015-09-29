@@ -67,6 +67,10 @@ public class CompletePipeline {
 		
 		Preprocessor pp = Language.getLanguage().getPreprocessor(options);
 		Parse.parseOptions = options.getParseOptions();
+		if(options.semaforserver!=null) {
+			Parse.parseOptions.skipPD = true;
+			Parse.parseOptions.skipPI = true;
+		}
 		SemanticRoleLabeler srl;
 		if (options.reranker) {
 			srl = new Reranker(Parse.parseOptions);
@@ -143,6 +147,7 @@ public class CompletePipeline {
 		
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				new FileInputStream(options.input), Charset.forName("UTF-8")));
+		
 		SentenceWriter writer = null;
 		System.out.println(options.printRDF);
 		if (options.printANN)
@@ -223,7 +228,7 @@ public class CompletePipeline {
 				posOutput.append(token.tag());
 			}
 
-			String parse = ExternalProcesses.runProcess("nc " + options.mstserver, posOutput.toString());
+			String parse = ExternalProcesses.runProcess("nc " + options.mstserver.replaceAll(":", " "), posOutput.toString());
 			parse = parse.replaceAll("-\t-", "_\t_\n@#").replaceAll("@#\t", "")
 					.replaceAll("@#", "");
 
@@ -250,7 +255,7 @@ public class CompletePipeline {
 			sen.setHeadsAndDeprels(heads, deprels);
 		
 			/* add labeled predicates from SEMAFOR */
-			String json = ExternalProcesses.runProcess("nc " + options.semaforserver, parse);
+			String json = ExternalProcesses.runProcess("nc " + options.semaforserver.replaceAll(":", " "), parse);
 			Pattern pred_frame = Pattern
 					.compile("\\{\"target\":\\{\"name\":\"([A-Za-z_]*)\",\"spans\":\\[\\{\"start\":([0-9]*),\"");
 			Matcher m = pred_frame.matcher(json);
