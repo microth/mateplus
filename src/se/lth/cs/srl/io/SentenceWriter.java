@@ -6,7 +6,9 @@ import se.lth.cs.srl.corpus.Sentence;
 public interface SentenceWriter {
 
 	public void write(Sentence s);
+
 	public void close();
+
 	public void specialwrite(Sentence s);
 
 }

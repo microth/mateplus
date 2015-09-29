@@ -9,35 +9,35 @@ import se.lth.cs.srl.corpus.Sentence;
 
 public class AllCoNLL09Reader extends AbstractCoNLL09Reader {
 
-    private Corpus c;
-	
+	private Corpus c;
+
 	public AllCoNLL09Reader(File file) {
 		super(file);
 	}
 
-	protected void readNextSentence() throws IOException{
+	protected void readNextSentence() throws IOException {
 		String str;
-		Sentence sen=null;
-		StringBuilder senBuffer=new StringBuilder();
+		Sentence sen = null;
+		StringBuilder senBuffer = new StringBuilder();
 		while ((str = in.readLine()) != null) {
-			if(!str.trim().equals("")) {
+			if (!str.trim().equals("")) {
 				senBuffer.append(str).append("\n");
 			} else {
-                            if(!senBuffer.toString().startsWith("_"))
-                            c = new Corpus(senBuffer.toString().split("\t")[0]);
-                            sen=new CorpusSentence(Sentence.newSentence((NEWLINE_PATTERN.split(senBuffer.toString()))),c);
-                            
-                            //sen=Sentence.newSentence((NEWLINE_PATTERN.split(senBuffer.toString())));
-                            break;
+				if (!senBuffer.toString().startsWith("_"))
+					c = new Corpus(senBuffer.toString().split("\t")[0]);
+				sen = new CorpusSentence(Sentence.newSentence((NEWLINE_PATTERN
+						.split(senBuffer.toString()))), c);
+
+				// sen=Sentence.newSentence((NEWLINE_PATTERN.split(senBuffer.toString())));
+				break;
 			}
 		}
-		if(sen==null){
-			nextSen=null;
+		if (sen == null) {
+			nextSen = null;
 			in.close();
 		} else {
-			nextSen=sen;
+			nextSen = sen;
 		}
 	}
 
-	
 }

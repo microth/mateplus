@@ -29,35 +29,35 @@ import java.util.ArrayList;
 public class SwedishTokenizer {
 	public ArrayList<String> tokenize(String sentence, Charset charset) {
 		ArrayList<String> tokens = new ArrayList<String>();
-		
+
 		try {
 			sentence = preProcessSentence(sentence);
-			
-			Tokenizer swedishTokenizer = new Tokenizer(new StringReader(new String(sentence.getBytes(charset), Charset.forName("UTF-8"))));
-			
-			
-			while(swedishTokenizer.getNextToken() >= 0) {
-				tokens.add(swedishTokenizer.yytext());	
+
+			Tokenizer swedishTokenizer = new Tokenizer(new StringReader(
+					new String(sentence.getBytes(charset),
+							Charset.forName("UTF-8"))));
+
+			while (swedishTokenizer.getNextToken() >= 0) {
+				tokens.add(swedishTokenizer.yytext());
 			}
-			
+
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
-		
-		
+		}
+
 		return tokens;
 	}
-	
+
 	private static String preProcessSentence(String sentence) {
 		// Done to make the flex rules match
-		
+
 		sentence = sentence.replaceAll(" \\.", "\\.");
 		sentence = sentence.replaceAll(" \\)", "\\)");
-		
+
 		return sentence;
 	}
 }

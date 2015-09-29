@@ -14,23 +14,24 @@ public class DepsOnlyCoNLL09Reader extends AbstractCoNLL09Reader {
 	@Override
 	protected void readNextSentence() throws IOException {
 		String str;
-		Sentence sen=null;
-		StringBuilder senBuffer=new StringBuilder();
+		Sentence sen = null;
+		StringBuilder senBuffer = new StringBuilder();
 		while ((str = in.readLine()) != null) {
-			if(!str.trim().equals("")) {
+			if (!str.trim().equals("")) {
 				senBuffer.append(str).append("\n");
 			} else {
-				sen=Sentence.newDepsOnlySentence(NEWLINE_PATTERN.split(senBuffer.toString()));
-				//System.err.println("Processing sentence ...");
-				//System.err.println(sen);				
+				sen = Sentence.newDepsOnlySentence(NEWLINE_PATTERN
+						.split(senBuffer.toString()));
+				// System.err.println("Processing sentence ...");
+				// System.err.println(sen);
 				break;
 			}
 		}
-		if(sen==null){
-			nextSen=null;
+		if (sen == null) {
+			nextSen = null;
 			in.close();
 		} else {
-			nextSen=sen;
+			nextSen = sen;
 		}
 	}
 

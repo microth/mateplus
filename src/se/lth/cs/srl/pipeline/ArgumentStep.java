@@ -18,61 +18,63 @@ public abstract class ArgumentStep extends AbstractStep {
 	public ArgumentStep(FeatureSet fs) {
 		super(fs);
 	}
-	
-	protected abstract Integer getLabel(Predicate pred,Word arg);
+
+	protected abstract Integer getLabel(Predicate pred, Word arg);
 
 	protected String getPOSPrefix(String pos) {
-		for(String prefix:featureSet.POSPrefixes){
-			if(pos.startsWith(prefix))
+		for (String prefix : featureSet.POSPrefixes) {
+			if (pos.startsWith(prefix))
 				return prefix;
 		}
 		return null;
 	}
-	
-	//TODO this way we lookup the POSPrefix several times for the same predicate. Maybe the second parameter should be Iterable<Word> ?
+
+	// TODO this way we lookup the POSPrefix several times for the same
+	// predicate. Maybe the second parameter should be Iterable<Word> ?
 	protected void addInstance(Predicate pred, Word arg) {
-		String POSPrefix=getPOSPrefix(pred.getPOS());
-		if(POSPrefix==null){
-			if(Learn.learnOptions.skipNonMatchingPredicates){
+		String POSPrefix = getPOSPrefix(pred.getPOS());
+		if (POSPrefix == null) {
+			if (Learn.learnOptions.skipNonMatchingPredicates) {
 				return;
 			} else {
-				POSPrefix=featureSet.POSPrefixes[0];
+				POSPrefix = featureSet.POSPrefixes[0];
 			}
 		}
-		LearningProblem lp=learningProblems.get(POSPrefix);
+		LearningProblem lp = learningProblems.get(POSPrefix);
 
 		Collection<Integer> indices = new TreeSet<Integer>();
 		Map<Integer, Double> nonbinFeats = new TreeMap<Integer, Double>();
-		collectFeatures(pred,arg,POSPrefix,indices, nonbinFeats);
+		collectFeatures(pred, arg, POSPrefix, indices, nonbinFeats);
 
-		if(POSPrefix!=null)
-		    lp.addInstance(getLabel(pred,arg), indices, nonbinFeats);
+		if (POSPrefix != null)
+			lp.addInstance(getLabel(pred, arg), indices, nonbinFeats);
 	}
 
-    protected void collectFeatures(Predicate pred, Word arg, String POSPrefix, Collection<Integer> indices, Map<Integer, Double> nonbinFeats) {
-        if(POSPrefix==null)
-            return;
+	protected void collectFeatures(Predicate pred, Word arg, String POSPrefix,
+			Collection<Integer> indices, Map<Integer, Double> nonbinFeats) {
+		if (POSPrefix == null)
+			return;
 
-	Integer offset=0;
-	for(Feature f:featureSet.get(POSPrefix)){
-	    f.addFeatures(indices, nonbinFeats, pred, arg, offset, false);
-	    offset+=f.size(false);
+		Integer offset = 0;
+		for (Feature f : featureSet.get(POSPrefix)) {
+			f.addFeatures(indices, nonbinFeats, pred, arg, offset, false);
+			offset += f.size(false);
+		}
+		return;
 	}
-	return;
-    }
 
-	//TODO same thing as above.
+	// TODO same thing as above.
 	public Integer classifyInstance(Predicate pred, Word arg) {
-		String POSPrefix=getPOSPrefix(pred.getPOS());
-		if(POSPrefix==null){
-			POSPrefix=featureSet.POSPrefixes[0];
-			//System.out.println("Unknown POS-tag for predicate '"+pred.getForm()+"', falling back to "+POSPrefix);
-		}		
-		Model m=models.get(POSPrefix);
+		String POSPrefix = getPOSPrefix(pred.getPOS());
+		if (POSPrefix == null) {
+			POSPrefix = featureSet.POSPrefixes[0];
+			// System.out.println("Unknown POS-tag for predicate '"+pred.getForm()+"', falling back to "+POSPrefix);
+		}
+		Model m = models.get(POSPrefix);
 
 		Collection<Integer> indices = new TreeSet<Integer>();
 		Map<Integer, Double> nonbinFeats = new TreeMap<Integer, Double>();
-		collectFeatures(pred,arg,POSPrefix,indices, nonbinFeats);
+		collectFeatures(pred, arg, POSPrefix, indices, nonbinFeats);
 
 		return m.classify(indices, nonbinFeats);
 	}

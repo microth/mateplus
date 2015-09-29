@@ -30,53 +30,55 @@ import uk.ac.ed.inf.srl.ml.liblinear.LibLinearLearningProblem;
 
 public class PredicateDisambiguator implements PipelineStep {
 
-	public static final String FILE_PREFIX="pd_";
-	
+	public static final String FILE_PREFIX = "pd_";
+
 	private FeatureSet featureSet;
 	private PredicateReference predicateReference;
-	
-	//This is a map filename -> model
-	protected Map<String,Model> models;
 
-	private Map<String,List<String>> lexicon;
-	private Map<String,List<Predicate>> instances;
-	
-	
-	public PredicateDisambiguator(FeatureSet featureSet,PredicateReference predicateReference) {
-		this.featureSet=featureSet;
-		this.predicateReference=predicateReference;
-		
-		if((Parse.parseOptions!=null && Parse.parseOptions.framenet) || 
-				((Learn.learnOptions!=null && Learn.learnOptions.framenet))) {
+	// This is a map filename -> model
+	protected Map<String, Model> models;
+
+	private Map<String, List<String>> lexicon;
+	private Map<String, List<Predicate>> instances;
+
+	public PredicateDisambiguator(FeatureSet featureSet,
+			PredicateReference predicateReference) {
+		this.featureSet = featureSet;
+		this.predicateReference = predicateReference;
+
+		if ((Parse.parseOptions != null && Parse.parseOptions.framenet)
+				|| ((Learn.learnOptions != null && Learn.learnOptions.framenet))) {
 			lexicon = createLexicon("/disk/scratch/mroth/framenet/fndata-1.5/frame/");
-		
+
 		} else {
-			
+
 		}
 	}
 
 	private Map<String, List<String>> createLexicon(String lexicondir) {
 		Map<String, List<String>> retval = new HashMap<String, List<String>>();
-		File[] files = new File(lexicondir).listFiles(new FilenameFilter(){
+		File[] files = new File(lexicondir).listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".xml");
 			}
 		});
-		
+
 		BufferedReader br = null;
-		for(File f : files) {
+		for (File f : files) {
 			try {
 				br = new BufferedReader(new FileReader(f));
 				String framename = f.getName().replaceAll("\\..*", "");
 				String line = "";
-				while((line=br.readLine())!=null) {
-					if(!line.contains("<lexeme ")) continue;
-					String lexeme = line.replaceAll(".*name=\"", "").replaceAll("\".*", "");
-					if(!retval.containsKey(lexeme))
+				while ((line = br.readLine()) != null) {
+					if (!line.contains("<lexeme "))
+						continue;
+					String lexeme = line.replaceAll(".*name=\"", "")
+							.replaceAll("\".*", "");
+					if (!retval.containsKey(lexeme))
 						retval.put(lexeme, new LinkedList<String>());
 					retval.get(lexeme).add(framename);
 				}
-			} catch(IOException e) {
+			} catch (IOException e) {
 				e.printStackTrace();
 				System.exit(1);
 			} finally {
@@ -88,180 +90,204 @@ public class PredicateDisambiguator implements PipelineStep {
 				}
 			}
 		}
-		
+
 		return retval;
 	}
 
 	public void parse(Sentence s) {
-		for(Predicate pred:s.getPredicates()){
-			String POSPrefix=getPOSPrefix(pred);
-			String lemma=pred.getLemma();
+		for (Predicate pred : s.getPredicates()) {
+			String POSPrefix = getPOSPrefix(pred);
+			String lemma = pred.getLemma();
 			String sense = "-1";
-			if(lexicon!=null && lexicon.containsKey("lemma") && lexicon.get(lemma).size()==1) {
+			if (lexicon != null && lexicon.containsKey("lemma")
+					&& lexicon.get(lemma).size() == 1) {
 				pred.setSense(lexicon.get(lemma).get(0));
 				continue;
 			}
-			
-			if(POSPrefix==null && (Parse.parseOptions!=null && Parse.parseOptions.framenet) || 
-					((Learn.learnOptions!=null && Learn.learnOptions.framenet)))
+
+			if (POSPrefix == null
+					&& (Parse.parseOptions != null && Parse.parseOptions.framenet)
+					|| ((Learn.learnOptions != null && Learn.learnOptions.framenet)))
 				POSPrefix = featureSet.POSPrefixes[0];
-			
-			if(POSPrefix==null){
-				sense=predicateReference.getSimpleSense(pred, null);
+
+			if (POSPrefix == null) {
+				sense = predicateReference.getSimpleSense(pred, null);
 			} else {
-				String filename=predicateReference.getFileName(lemma,POSPrefix);
-				if(filename==null){
-					sense=predicateReference.getSimpleSense(pred,POSPrefix);
+				String filename = predicateReference.getFileName(lemma,
+						POSPrefix);
+				if (filename == null) {
+					sense = predicateReference.getSimpleSense(pred, POSPrefix);
 				} else {
-					Model m=getModel(filename);
-					Collection<Integer> indices=new TreeSet<Integer>();
-					Map<Integer, Double> nonbinFeats=new TreeMap<Integer, Double>();
-					Integer offset=0;
-					for(Feature f:featureSet.get(POSPrefix)){
-					    f.addFeatures(indices,nonbinFeats,pred,null,offset,false);
-					    offset+=f.size(false);
+					Model m = getModel(filename);
+					Collection<Integer> indices = new TreeSet<Integer>();
+					Map<Integer, Double> nonbinFeats = new TreeMap<Integer, Double>();
+					Integer offset = 0;
+					for (Feature f : featureSet.get(POSPrefix)) {
+						f.addFeatures(indices, nonbinFeats, pred, null, offset,
+								false);
+						offset += f.size(false);
 					}
-					
+
 					// no framenet
-					if((Parse.parseOptions!=null && !Parse.parseOptions.framenet) || 
-							((Learn.learnOptions!=null && !Learn.learnOptions.framenet))) {
-						Integer label=m.classify(indices,nonbinFeats);
-						sense = predicateReference.getSense(lemma,POSPrefix,label);
-					// framenet
+					if ((Parse.parseOptions != null && !Parse.parseOptions.framenet)
+							|| ((Learn.learnOptions != null && !Learn.learnOptions.framenet))) {
+						Integer label = m.classify(indices, nonbinFeats);
+						sense = predicateReference.getSense(lemma, POSPrefix,
+								label);
+						// framenet
 					} else {
 						boolean foundone = false;
-						
+
 						/** with lexicon! **/
-						List<uk.ac.ed.inf.srl.ml.liblinear.Label> labels = m.classifyProb(indices, nonbinFeats);
-						if(!lexicon.containsKey(lemma))
-							sense=predicateReference.getSense(lemma,POSPrefix,labels.get(0).getLabel());
-							 //+ "," + predicateReference.getSense(lemma,POSPrefix,labels.get(1).getLabel());
+						List<uk.ac.ed.inf.srl.ml.liblinear.Label> labels = m
+								.classifyProb(indices, nonbinFeats);
+						if (!lexicon.containsKey(lemma))
+							sense = predicateReference.getSense(lemma,
+									POSPrefix, labels.get(0).getLabel());
+						// + "," +
+						// predicateReference.getSense(lemma,POSPrefix,labels.get(1).getLabel());
 						else {
-							for(uk.ac.ed.inf.srl.ml.liblinear.Label l : labels) {
-								if(lexicon.get(lemma).contains(predicateReference.getSense(lemma,POSPrefix,l.getLabel()))) {
-									//if(foundone) {
-									//	String tmp = predicateReference.getSense(lemma,POSPrefix,l.getLabel());
-									//	pred.addPotentialSense(tmp, l.getProb());
-									//	break;
-									//} else {					
-										sense = predicateReference.getSense(lemma,POSPrefix,l.getLabel());
-										//pred.addPotentialSense(sense, l.getProb());
-										pred.setSense(sense);
-										foundone = true;
-										/**/break;/**/
-									//}
+							for (uk.ac.ed.inf.srl.ml.liblinear.Label l : labels) {
+								if (lexicon.get(lemma).contains(
+										predicateReference.getSense(lemma,
+												POSPrefix, l.getLabel()))) {
+									// if(foundone) {
+									// String tmp =
+									// predicateReference.getSense(lemma,POSPrefix,l.getLabel());
+									// pred.addPotentialSense(tmp, l.getProb());
+									// break;
+									// } else {
+									sense = predicateReference.getSense(lemma,
+											POSPrefix, l.getLabel());
+									// pred.addPotentialSense(sense,
+									// l.getProb());
+									pred.setSense(sense);
+									foundone = true;
+									/**/break;/**/
+									// }
 								}
 							}
-							
-							if(sense.equals("-1")) {
-								sense=predicateReference.getSense(lemma,POSPrefix,labels.get(0).getLabel());
+
+							if (sense.equals("-1")) {
+								sense = predicateReference.getSense(lemma,
+										POSPrefix, labels.get(0).getLabel());
 							}
 						}
 					}
-					
+
 				}
 			}
-			
+
 			pred.setSense(sense);
 		}
 	}
-	
-	private Model getModel(String filename){
+
+	private Model getModel(String filename) {
 		return models.get(filename);
 	}
 
 	public void extractInstances(Sentence s) {
-		for(Predicate pred:s.getPredicates()){
-			//Note we would prefer to get the gold standard POS. Cause this always makes sense.
-			String POSPrefix=getPOSPrefix(pred);
-			if(POSPrefix==null){
-				if(Learn.learnOptions.skipNonMatchingPredicates){
+		for (Predicate pred : s.getPredicates()) {
+			// Note we would prefer to get the gold standard POS. Cause this
+			// always makes sense.
+			String POSPrefix = getPOSPrefix(pred);
+			if (POSPrefix == null) {
+				if (Learn.learnOptions.skipNonMatchingPredicates) {
 					continue;
 				} else {
-					POSPrefix=featureSet.POSPrefixes[0];
+					POSPrefix = featureSet.POSPrefixes[0];
 				}
 			}
-			String filename=predicateReference.getFileName(pred.getLemma(),POSPrefix);
-			if(filename==null)
+			String filename = predicateReference.getFileName(pred.getLemma(),
+					POSPrefix);
+			if (filename == null)
 				continue;
-			if(!instances.containsKey(filename))
-				instances.put(filename,new ArrayList<Predicate>());
+			if (!instances.containsKey(filename))
+				instances.put(filename, new ArrayList<Predicate>());
 			instances.get(filename).add(pred);
 		}
 	}
 
 	private String getPOSPrefix(Predicate pred) {
-		for(String prefix:featureSet.POSPrefixes){
-			if(pred.getPOS().startsWith(prefix))
+		for (String prefix : featureSet.POSPrefixes) {
+			if (pred.getPOS().startsWith(prefix))
 				return prefix;
 		}
 		return null;
 	}
-	
 
 	public void prepareLearning() {
-		instances=new HashMap<String,List<Predicate>>();
+		instances = new HashMap<String, List<Predicate>>();
 	}
-	
-	private void addInstance(Predicate pred,LearningProblem lp){
-		String POSPrefix=getPOSPrefix(pred);
-		if(POSPrefix==null){
-			POSPrefix=featureSet.POSPrefixes[0];
+
+	private void addInstance(Predicate pred, LearningProblem lp) {
+		String POSPrefix = getPOSPrefix(pred);
+		if (POSPrefix == null) {
+			POSPrefix = featureSet.POSPrefixes[0];
 		}
-		Collection<Integer> indices=new TreeSet<Integer>();
-		Map<Integer, Double> nonbinFeats= new TreeMap<Integer, Double>();
-		Integer offset=0;
-		for(Feature f:featureSet.get(POSPrefix)){
-		    f.addFeatures(indices,nonbinFeats,pred,null,offset,false);
-		    offset+=f.size(false);
+		Collection<Integer> indices = new TreeSet<Integer>();
+		Map<Integer, Double> nonbinFeats = new TreeMap<Integer, Double>();
+		Integer offset = 0;
+		for (Feature f : featureSet.get(POSPrefix)) {
+			f.addFeatures(indices, nonbinFeats, pred, null, offset, false);
+			offset += f.size(false);
 		}
-		Integer label=predicateReference.getLabel(pred.getLemma(),POSPrefix,pred.getSense());
-		lp.addInstance(label,indices,nonbinFeats);
+		Integer label = predicateReference.getLabel(pred.getLemma(), POSPrefix,
+				pred.getSense());
+		lp.addInstance(label, indices, nonbinFeats);
 	}
-	
-	public void writeInstance(Predicate pred){
-		String POSPrefix=getPOSPrefix(pred);
-		if(POSPrefix==null){
-			POSPrefix=featureSet.POSPrefixes[0];
+
+	public void writeInstance(Predicate pred) {
+		String POSPrefix = getPOSPrefix(pred);
+		if (POSPrefix == null) {
+			POSPrefix = featureSet.POSPrefixes[0];
 		}
-		Collection<Integer> indices=new TreeSet<Integer>();
-		Map<Integer, Double> nonbinFeats= new TreeMap<Integer, Double>();
-		Integer offset=0;
-		for(Feature f:featureSet.get(POSPrefix)){
-		    f.addFeatures(indices,nonbinFeats,pred,null,offset,false);
-		    offset+=f.size(false);
+		Collection<Integer> indices = new TreeSet<Integer>();
+		Map<Integer, Double> nonbinFeats = new TreeMap<Integer, Double>();
+		Integer offset = 0;
+		for (Feature f : featureSet.get(POSPrefix)) {
+			f.addFeatures(indices, nonbinFeats, pred, null, offset, false);
+			offset += f.size(false);
 		}
-		Integer label=predicateReference.getLabel(pred.getLemma(),POSPrefix,pred.getSense());
-		
+		Integer label = predicateReference.getLabel(pred.getLemma(), POSPrefix,
+				pred.getSense());
+
 		System.err.print(label);
-		for(Integer i : indices) {
+		for (Integer i : indices) {
 			System.err.print(" ");
-			System.err.print(i+":"+1);
+			System.err.print(i + ":" + 1);
 		}
 		System.err.println();
 	}
 
 	@Override
 	public void done() {
-		// we do nothing here since we have no filehandles open. All writing of training data goes on in train()
+		// we do nothing here since we have no filehandles open. All writing of
+		// training data goes on in train()
 	}
 
 	@Override
 	public void train() {
-		models=new HashMap<String,Model>();
-		//Here we need to do them one at a time, thats the whole reason why we collected the Map<String,List<Predicate>> instances map. Otherwise we would easily run out of filehandles.
-		Iterator<String> it=instances.keySet().iterator();
-		while(it.hasNext()){
-			String key=it.next();
-			File dataFile=new File(Learn.learnOptions.tempDir,FILE_PREFIX+key);
-			LibLinearLearningProblem lp=new LibLinearLearningProblem(dataFile,false);
-			for(Predicate pred:instances.get(key)){
-				addInstance(pred,lp);
+		models = new HashMap<String, Model>();
+		// Here we need to do them one at a time, thats the whole reason why we
+		// collected the Map<String,List<Predicate>> instances map. Otherwise we
+		// would easily run out of filehandles.
+		Iterator<String> it = instances.keySet().iterator();
+		while (it.hasNext()) {
+			String key = it.next();
+			File dataFile = new File(Learn.learnOptions.tempDir, FILE_PREFIX
+					+ key);
+			LibLinearLearningProblem lp = new LibLinearLearningProblem(
+					dataFile, false);
+			for (Predicate pred : instances.get(key)) {
+				addInstance(pred, lp);
 			}
 			lp.done();
-			Model m=lp.train(true);
-			models.put(key,m);
-			it.remove(); //This way we should lose references to the words and sentences we no longer need, and the gc should be able to clean this up for us.
+			Model m = lp.train(true);
+			models.put(key, m);
+			it.remove(); // This way we should lose references to the words and
+							// sentences we no longer need, and the gc should be
+							// able to clean this up for us.
 		}
 	}
 
@@ -269,21 +295,22 @@ public class PredicateDisambiguator implements PipelineStep {
 	public void writeModels(ZipOutputStream zos) throws IOException {
 		AbstractStep.writeModels(zos, models, getModelFileName());
 	}
-	
+
 	@Override
-	public void readModels(ZipFile zipFile) throws IOException, ClassNotFoundException {
-		models=new HashMap<String,Model>();
+	public void readModels(ZipFile zipFile) throws IOException,
+			ClassNotFoundException {
+		models = new HashMap<String, Model>();
 		AbstractStep.readModels(zipFile, models, getModelFileName());
 	}
-	
-	private String getModelFileName(){
-		return FILE_PREFIX+".models";
+
+	private String getModelFileName() {
+		return FILE_PREFIX + ".models";
 	}
 
 	@Override
 	public void prepareLearning(int i) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

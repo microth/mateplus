@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class CorefChain extends LinkedList<String> {
 
 	int id;
-	
+
 	public CorefChain(int id) {
 		this.id = id;
 	}

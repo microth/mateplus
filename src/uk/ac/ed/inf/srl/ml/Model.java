@@ -9,8 +9,11 @@ import uk.ac.ed.inf.srl.ml.liblinear.Label;
 
 public interface Model extends Serializable {
 
-    public List<Label> classifyProb(Collection<Integer> indices, Map<Integer, Double> nonbinFeats);
-    public Integer classify(Collection<Integer> indices, Map<Integer, Double> nonbinFeats);
-    //public void sparsify();
-	
+	public List<Label> classifyProb(Collection<Integer> indices,
+			Map<Integer, Double> nonbinFeats);
+
+	public Integer classify(Collection<Integer> indices,
+			Map<Integer, Double> nonbinFeats);
+	// public void sparsify();
+
 }
