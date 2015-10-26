@@ -169,18 +169,14 @@ public class ArgumentClassifier extends ArgumentStep {
 	@Override
 	public void parse(Sentence s) {
 		int changes = 1;
-		int round = 0;
 		while (changes > 0) {
-			round++;
-			if (round > 2)
-				System.err.println("Redoing AC...");
 			changes = 0;
 			for (Predicate pred : s.getPredicates()) {
 				Map<Word, String> argMap = pred.getArgMap();
 				/** if(pred.getCandSenses()<2) { **/
 				for (Word arg : argMap.keySet()) {
-					if ((Parse.parseOptions != null && Parse.parseOptions.framenetdir !=null)
-							|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir!=null))) {
+					if ((Parse.parseOptions != null && Parse.parseOptions.framenetdir ==null)
+							|| ((Learn.learnOptions != null && Learn.learnOptions.framenetdir==null))) {
 						Integer label = super.classifyInstance(pred, arg);
 						if (!argLabels.get(label).equals(argMap.get(arg)))
 							changes++;

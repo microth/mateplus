@@ -149,7 +149,7 @@ public class CompletePipeline {
 				new FileInputStream(options.input), Charset.forName("UTF-8")));
 		
 		SentenceWriter writer = null;
-		System.out.println(options.printRDF);
+
 		if (options.printANN)
 			writer = new ANNWriter(options.output);
 		else
