@@ -23,8 +23,7 @@ fi
 ##################################################
 ## (2) These ones may need to be changed
 ##################################################
-JAVA="/usr/lib/jvm/java-1.8.0-sun/bin/java"
-#JAVA="java" #Edit this i you want to use a specific java binary.
+JAVA="java" #Edit this fi you want to use a specific java binary.
 MEM="20g -XX:-UseGCOverheadLimit" #Memory for the JVM, might need to be increased for large corpora.
 CP="lib/*:mateplus.jar"
 JVM_ARGS="-cp $CP -Xmx$MEM"
