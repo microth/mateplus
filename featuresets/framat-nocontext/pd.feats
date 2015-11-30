@@ -1,0 +1,16 @@
+N
+PredWord
+PredLemma
+PredPOS
+PredWord+PredPOS
+PredLemma+PredPOS
+DepSubCat
+ChildDepSet
+PredDeprel
+PredDeprel+PredPOS
+PredParentWord
+ChildWordSet
+ChildPOSSet
+PredDeprel+PredWord
+ChildDepSet+PredWord
+ChildDepSet+PredLemma

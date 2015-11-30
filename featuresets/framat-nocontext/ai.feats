@@ -1,0 +1,207 @@
+I
+ArgVoice+AnyLemma - size: 4904/4904
+Position+ArgVoice - size: 5/5
+PredLemma - size: 2670/7893
+PredLemmaSense+PredLemma - size: 3369/3369
+PredVoice+PredLemma - size: 2869/2869
+PredVoice+PredLemmaSense - size: 830/830
+PredPOS - size: 26/26
+PredLemmaSense+PredPOS - size: 2365/2365
+DepSubCat - size: 710/1219
+ChildDepSet - size: 11/11
+SubCatSize - size: 7/7
+SubCatSize+PredLemmaSense - size: 2451/2451
+AnyPOS - size: 45/45
+ArgPOS - size: 43/43
+FirstPOS - size: 43/43
+SpanSize - size: 7/7
+SpanSize+PredLemmaSense - size: 3320/3320
+LastPOS - size: 43/43
+FirstLemma - size: 6947/6947
+ArgDeprel - size: 12/12
+FirstDeprel - size: 12/12
+FirstDeprel+PredLemmaSense - size: 2553/2553
+ArgLemma - size: 6947/6947
+SecondDeprel - size: 12/12
+SecondDeprel+PredLemmaSense - size: 3439/3439
+LastLemma - size: 6947/6947
+LastDeprel - size: 12/12
+LastDeprel+PredLemmaSense - size: 3178/3178
+AnyLemma - size: 7893/7893
+Position+AnyLemma - size: 8300/8300 
+DeprelPath - size: 1488/1488 
+SameSubTree 
+SameParentSubTree 
+PathItemSet 
+SameSubTree+DeprelDistance 
+SameParentSubTree+DeprelDistance 
+PathItemSet+DeprelDistance
+Path2GramSet
+Path2GramSet+DeprelDistance
+Path3GramSet
+Path3GramSet+DeprelDistance
+DeprelDistance - size: 6/6
+Position - size: 3/3
+Position+PredLemmaSense - size: 1499/1499
+Distance - size: 8/8
+FirstCCWord - size: 299/299
+FirstCCWord+PredLemmaSense - size: 6615/6615
+SecondCCWord - size: 299/299
+SecondCCWord+PredLemmaSense - size: 3320/3320
+LastCCWord - size: 299/299
+LastCCWord+PredLemmaSense - size: 2770/2770
+
+J
+PredLemma - size: 2670/7893
+PredLemmaSense+PredLemma - size: 3369/3369
+PredPOS - size: 26/26
+PredLemmaSense+PredPOS - size: 2365/2365
+DepSubCat - size: 710/1219
+ChildDepSet - size: 11/11
+SubCatSize - size: 7/7
+SubCatSize+PredLemmaSense - size: 2451/2451
+AnyPOS - size: 45/45
+ArgPOS - size: 43/43
+FirstPOS - size: 43/43
+SpanSize - size: 7/7
+SpanSize+PredLemmaSense - size: 3320/3320
+LastPOS - size: 43/43
+FirstLemma - size: 6947/6947
+ArgDeprel - size: 12/12
+FirstDeprel - size: 12/12
+FirstDeprel+PredLemmaSense - size: 2553/2553
+ArgLemma - size: 6947/6947
+SecondDeprel - size: 12/12
+SecondDeprel+PredLemmaSense - size: 3439/3439
+LastLemma - size: 6947/6947
+LastDeprel - size: 12/12
+LastDeprel+PredLemmaSense - size: 3178/3178
+AnyLemma - size: 7893/7893
+Position+AnyLemma - size: 8300/8300 
+DeprelPath - size: 1488/1488
+SameSubTree+DeprelDistance 
+SameParentSubTree+DeprelDistance 
+PathItemSet+DeprelDistance 
+SameSubTree 
+SameParentSubTree 
+PathItemSet
+Path2GramSet
+Path2GramSet+DeprelDistance
+Path3GramSet
+Path3GramSet+DeprelDistance
+DeprelDistance - size: 6/6
+Position - size: 3/3
+Position+PredLemmaSense - size: 1499/1499
+Distance - size: 8/8
+FirstCCWord - size: 299/299
+FirstCCWord+PredLemmaSense - size: 6615/6615
+SecondCCWord - size: 299/299
+SecondCCWord+PredLemmaSense - size: 3320/3320
+LastCCWord - size: 299/299
+LastCCWord+PredLemmaSense - size: 2770/2770
+ArgVoice+AnyLemma - size: 4904/4904
+Position+ArgVoice - size: 5/5
+
+N
+PredLemma - size: 2670/7893
+PredLemmaSense+PredLemma - size: 3369/3369
+PredPOS - size: 26/26
+PredLemmaSense+PredPOS - size: 2365/2365
+DepSubCat - size: 710/1219
+ChildDepSet - size: 11/11
+SubCatSize - size: 7/7
+SubCatSize+PredLemmaSense - size: 2451/2451
+AnyPOS - size: 45/45
+ArgPOS - size: 43/43
+FirstPOS - size: 43/43
+SpanSize - size: 7/7
+SpanSize+PredLemmaSense - size: 3320/3320
+LastPOS - size: 43/43
+FirstLemma - size: 6947/6947
+ArgDeprel - size: 12/12
+FirstDeprel - size: 12/12
+FirstDeprel+PredLemmaSense - size: 2553/2553
+ArgLemma - size: 6947/6947
+SecondDeprel - size: 12/12
+SecondDeprel+PredLemmaSense - size: 3439/3439
+LastLemma - size: 6947/6947
+LastDeprel - size: 12/12
+LastDeprel+PredLemmaSense - size: 3178/3178
+AnyLemma - size: 7893/7893
+Position+AnyLemma - size: 8300/8300 
+DeprelPath - size: 1488/1488 
+SameSubTree+DeprelDistance 
+SameParentSubTree+DeprelDistance 
+PathItemSet+DeprelDistance 
+SameSubTree 
+SameParentSubTree 
+PathItemSet
+Path2GramSet
+Path2GramSet+DeprelDistance
+Path3GramSet
+Path3GramSet+DeprelDistance
+DeprelDistance - size: 6/6
+Position - size: 3/3
+Position+PredLemmaSense - size: 1499/1499
+Distance - size: 8/8
+FirstCCWord - size: 299/299
+FirstCCWord+PredLemmaSense - size: 6615/6615
+SecondCCWord - size: 299/299
+SecondCCWord+PredLemmaSense - size: 3320/3320
+LastCCWord - size: 299/299
+LastCCWord+PredLemmaSense - size: 2770/2770
+ArgVoice+AnyLemma - size: 4904/4904
+Position+ArgVoice - size: 5/5 DiscNew
+
+V
+ArgVoice+AnyLemma - size: 4904/4904
+Position+ArgVoice - size: 5/5
+PredLemma - size: 2670/7893
+PredLemmaSense+PredLemma - size: 3369/3369
+PredVoice+PredLemma - size: 2869/2869
+PredVoice+PredLemmaSense - size: 830/830
+PredPOS - size: 26/26
+PredLemmaSense+PredPOS - size: 2365/2365
+DepSubCat - size: 710/1219
+ChildDepSet - size: 11/11
+SubCatSize - size: 7/7
+SubCatSize+PredLemmaSense - size: 2451/2451
+AnyPOS - size: 45/45
+ArgPOS - size: 43/43
+FirstPOS - size: 43/43
+SpanSize - size: 7/7
+SpanSize+PredLemmaSense - size: 3320/3320
+LastPOS - size: 43/43
+FirstLemma - size: 6947/6947
+ArgDeprel - size: 12/12
+FirstDeprel - size: 12/12
+FirstDeprel+PredLemmaSense - size: 2553/2553
+ArgLemma - size: 6947/6947
+SecondDeprel - size: 12/12
+SecondDeprel+PredLemmaSense - size: 3439/3439
+LastLemma - size: 6947/6947
+LastDeprel - size: 12/12
+LastDeprel+PredLemmaSense - size: 3178/3178
+AnyLemma - size: 7893/7893
+Position+AnyLemma - size: 8300/8300 
+DeprelPath - size: 1488/1488 
+SameSubTree+DeprelDistance 
+SameParentSubTree+DeprelDistance 
+PathItemSet+DeprelDistance 
+SameSubTree 
+SameParentSubTree 
+PathItemSet
+Path2GramSet
+Path2GramSet+DeprelDistance
+Path3GramSet
+Path3GramSet+DeprelDistance
+DeprelDistance - size: 6/6
+Position - size: 3/3
+Position+PredLemmaSense - size: 1499/1499
+Distance - size: 8/8
+FirstCCWord - size: 299/299
+FirstCCWord+PredLemmaSense - size: 6615/6615
+SecondCCWord - size: 299/299
+SecondCCWord+PredLemmaSense - size: 3320/3320
+LastCCWord - size: 299/299
+LastCCWord+PredLemmaSense - size: 2770/2770
