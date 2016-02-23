@@ -1,31 +1,20 @@
 package se.lth.cs.srl.features;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
-import java.util.zip.ZipFile;
 
-import dmonner.xlbp.compound.AbstractWeightedCompound;
-import se.lth.cs.srl.corpus.Predicate;
-import se.lth.cs.srl.corpus.Sentence;
-import se.lth.cs.srl.corpus.Word;
-import se.lth.cs.srl.corpus.Word.WordData;
 import se.lth.cs.srl.pipeline.Step;
+import se.lth.cs.srl.corpus.Sentence;
+import se.lth.cs.srl.corpus.Word.WordData;
 import se.lth.cs.srl.util.BrownCluster;
-import se.lth.cs.srl.util.BrownCluster.ClusterVal;
 import se.lth.cs.srl.util.WordEmbedding;
-import uk.ac.ed.inf.srl.lstm.DataConverter;
-import uk.ac.ed.inf.srl.lstm.EmbeddingNetwork;
+import se.lth.cs.srl.util.BrownCluster.ClusterVal;
 
 public class FeatureGenerator implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -33,14 +22,7 @@ public class FeatureGenerator implements Serializable {
 	private Map<FeatureName, Feature> cache;
 	private Map<String, Feature> qcache;
 
-	private Map<String, EmbeddingNetwork> nets;
-	
-	private DataConverter dc;
-	
-	private BufferedReader br;
-	
 	public FeatureGenerator() {
-		br = null;
 		cache = new HashMap<FeatureName, Feature>();
 		qcache = new HashMap<String, Feature>();
 	}
@@ -83,48 +65,11 @@ public class FeatureGenerator implements Serializable {
 					list.add(getQFeature(fn1, fn2, includeAllWords, POSPrefix,
 							bc, we));
 				} else if (featureNameStr.contains("Embedding")) {
-					if(featureNameStr.startsWith("PathEmbedding")) {
-						String step = featureNameStr.substring(13/*,16*/);
-						if(nets==null) {
-							System.err.println("Creating DataConverter...");
-							nets = new TreeMap<String, EmbeddingNetwork>();			
-						}
-						if(!nets.containsKey(step)) {
-							System.err.println("Loading network " + step);
-							try {
-								//EmbeddingNetwork net = (EmbeddingNetwork)new ObjectInputStream(new FileInputStream(step/*+"_network"*/)).readObject();
-								ZipFile z = new ZipFile(step);
-								EmbeddingNetwork net = (EmbeddingNetwork)new ObjectInputStream(z.getInputStream(z.getEntry("network.o"))).readObject();
-								nets.put(step,  net);
-							} catch (Exception e) {
-								e.printStackTrace();
-								System.exit(1);
-							}	
-						}
-						if(dc==null) {
-							dc = new DataConverter(nets.get(step));
-						}
-						EmbeddingNetwork net = nets.get(step);
-						int hid1 = 0;
-						if(net.getComponentByName("Hidden")!=null)
-							hid1 = ((AbstractWeightedCompound)net.getComponentByName("Hidden")).getOutput().getActivations().length;
-						int hid2 = 0;
-						if(net.getComponentByName("ExtraHidden")!=null)
-							hid2 = ((AbstractWeightedCompound)net.getComponentByName("ExtraHidden")).getOutput().getActivations().length;						
-						//for(int dim=0; dim<(hid1+hid2); dim++) {
-							Feature f;
-							if(step.startsWith("ac"))
-								 f = new DependencyCPathEmbedding(FeatureName.valueOf(featureNameStr), null, POSPrefix, true, nets.get(step), dc, hid1+hid2); 
-							else f = new DependencyIPathEmbedding(FeatureName.valueOf(featureNameStr), null, POSPrefix, true, nets.get(step), dc, hid1+hid2);
-							list.add(f);
-							cache.put(FeatureName.valueOf(featureNameStr), f);
-						//} 
-					} else {
-						for (int i = 0; i < WordEmbedding.DEF_DIMENSIONALITY; i++) {
-							FeatureName fn = FeatureName.valueOf(featureNameStr
-									+ String.format("%03d", i));
-							list.add(getFeature(fn, includeAllWords, POSPrefix, bc, we));
-						}
+					for (int i = 0; i < WordEmbedding.DEF_DIMENSIONALITY; i++) {
+						FeatureName fn = FeatureName.valueOf(featureNameStr
+								+ String.format("%03d", i));
+						list.add(getFeature(fn, includeAllWords, POSPrefix, bc,
+								we));
 					}
 				} else {
 					FeatureName fn = FeatureName.valueOf(featureNameStr);
@@ -471,9 +416,7 @@ public class FeatureGenerator implements Serializable {
 				ret = new SpanLengthFeature(fn, WordData.Deprel, false,
 						POSPrefix);
 				break;
-			case ContinuousFeatureFromFile:
-				ret = new ContinuousFeatureFromFile(fn, null, POSPrefix, true, br); break;				
-				
+
 			default:
 				if (fn.toString().startsWith("WordEmbedding")
 						|| fn.toString().startsWith("WordTokenEmbedding")) {
@@ -678,46 +621,14 @@ public class FeatureGenerator implements Serializable {
 
 	public Feature getCachedFeature(String featureNameString) {
 		Feature ret;
-		/*if (featureNameString.startsWith("PathEmbedding")) {
-			String step = featureNameString.substring(13);
-			if(nets==null) {
-				System.err.println("Creating DataConverter...");
-				nets = new TreeMap<String, EmbeddingNetwork>();			
-				}
-				//if(!nets.containsKey(step)) {
-					System.err.println("Loading network " + step);
-					try {
-						EmbeddingNetwork net = (EmbeddingNetwork)new ObjectInputStream(new FileInputStream(step)).readObject();
-						nets.put(step,  net);
-					} catch (Exception e) {
-						e.printStackTrace();
-						System.exit(1);
-					}	
-				//}
-				if(dc==null) {
-					dc = new DataConverter(nets.get(step));
-				}
-				EmbeddingNetwork net = nets.get(step);
-				int hid1 = 0;
-				if(net.getComponentByName("Hidden")!=null)
-					hid1 = ((AbstractWeightedCompound)net.getComponentByName("Hidden")).getOutput().getActivations().length;
-				int hid2 = 0;
-				if(net.getComponentByName("ExtraHidden")!=null)
-					hid2 = ((AbstractWeightedCompound)net.getComponentByName("ExtraHidden")).getOutput().getActivations().length;						
-				//for(int dim=0; dim<(hid1+hid2); dim++) {
-					if(step.contains("ac"))
-						 ret = new DependencyCPathEmbedding(FeatureName.valueOf(featureNameString), null, step.substring(2), true, nets.get(step), dc, hid1+hid2); 
-					else ret = new DependencyIPathEmbedding(FeatureName.valueOf(featureNameString), null, step.substring(2), true, nets.get(step), dc, hid1+hid2); 
-		} else {**/
-			if (featureNameString.contains("+")) {
-				ret = qcache.get(getCanonicalQFeatureName(featureNameString));
-			} else {
-				ret = cache.get(FeatureName.valueOf(featureNameString));
-			}
-		//}
-		if(ret==null)
+		if (featureNameString.contains("+")) {
+			ret = qcache.get(getCanonicalQFeatureName(featureNameString));
+		} else {
+			ret = cache.get(FeatureName.valueOf(featureNameString));
+		}
+		if (ret == null)
 			throw new Error(
-				"Trying to read a cached feature that doesn't exist. Did you do something nasty with your model? Otherwise the implementation is wrong.");
+					"Trying to read a cached feature that doesn't exist. Did you do something nasty with your model? Otherwise the implementation is wrong.");
 		return ret;
 	}
 
