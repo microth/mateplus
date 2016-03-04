@@ -89,6 +89,8 @@ public class PredicateIdentifier extends AbstractStep {
 			// if(w.getLemma().equals("sein")) {
 			// for(Word c : w.getChildren()) {
 			for (int i = 1, size = s.size(); i < size; ++i) {
+				if(s.get(i) instanceof Predicate) continue;
+				
 				Word c = s.get(i);
 				if (c.getDeprel().equals("PD") || c.getDeprel().equals("pred")) {
 					s.makePredicate(c.getIdx());
