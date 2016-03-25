@@ -24,6 +24,7 @@ import se.lth.cs.srl.corpus.Sentence;
 import se.lth.cs.srl.corpus.Word;
 import se.lth.cs.srl.options.CompletePipelineCMDLineOptions;
 import se.lth.cs.srl.options.FullPipelineOptions;
+import se.lth.cs.srl.options.ParseOptions;
 import se.lth.cs.srl.util.ExternalProcesses;
 
 
@@ -59,8 +60,11 @@ public class FramatDemo {
 		FullPipelineOptions options = new CompletePipelineCMDLineOptions();
 		options.parseCmdLineArgs(commandlineoptions); // process options
 		
-		// set glove directory if available
-		glove = (options.glovedir!=null)?new ExternalProcesses(options.glovedir):null;
+		Parse.parseOptions = options.getParseOptions();
+		Parse.parseOptions.globalFeats = true; // activate additional global features
+		
+		// set glove directory if available		
+		glove = (options.glovedir!=null)?new ExternalProcesses(options.glovedir):null;		
 		
 		Properties props = new Properties();
 		props.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse, dcoref");

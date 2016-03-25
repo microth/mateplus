@@ -52,6 +52,7 @@ public abstract class FullPipelineOptions {
 		parseOptions.skipAI = skipAI;
 		parseOptions.printRDF = printRDF;
 		parseOptions.printANN = printANN;
+		parseOptions.framenetdir = framenetdir;
 		return parseOptions;
 	}
 
