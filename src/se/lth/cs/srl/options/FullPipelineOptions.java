@@ -32,12 +32,14 @@ public abstract class FullPipelineOptions {
 	public boolean printANN = false;
 	public boolean hybrid = false;
 	public boolean external = false;
+	public boolean globalFeats = false;
 	
 	// links to external tools/servers/resources
 	public String glovedir = null;
 	public String mstserver = null;
 	public String semaforserver = null;
 	public String framenetdir = null;
+
 	
 	public static String NULL_LANGUAGE_NAME = "Unk";
 
@@ -53,6 +55,7 @@ public abstract class FullPipelineOptions {
 		parseOptions.printRDF = printRDF;
 		parseOptions.printANN = printANN;
 		parseOptions.framenetdir = framenetdir;
+		parseOptions.globalFeats = globalFeats;
 		return parseOptions;
 	}
 
@@ -167,6 +170,9 @@ public abstract class FullPipelineOptions {
 		} else if (args[ai].equals("-framenet")) {
 			ai++;
 			framenetdir = args[ai++];
+		} else if (args[ai].equals("-globalFeats")) {
+			ai++;
+			globalFeats = true;
 		}
 		return ai;
 	}
