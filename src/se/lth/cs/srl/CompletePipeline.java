@@ -279,16 +279,19 @@ public class CompletePipeline {
 		Map<Integer, CorefChain> coref = document
 				.get(CorefChainAnnotation.class);
 		int num = 1;
-		for (Map.Entry<Integer, CorefChain> entry : coref.entrySet()) {
-			CorefChain cc = entry.getValue();
-			// skip singleton mentions
-			if (cc.getMentionsInTextualOrder().size() == 1)
-				continue;
-
-			for (CorefMention m : cc.getMentionsInTextualOrder()) {
-				c.addMention(c.get(m.sentNum - 1), m.headIndex, num);
+		// this can be null apparently?!
+		if(coref==null || coref.entrySet()==null) {
+			for (Map.Entry<Integer, CorefChain> entry : coref.entrySet()) {
+				CorefChain cc = entry.getValue();
+				// skip singleton mentions
+				if (cc.getMentionsInTextualOrder().size() == 1)
+					continue;
+	
+				for (CorefMention m : cc.getMentionsInTextualOrder()) {
+					c.addMention(c.get(m.sentNum - 1), m.headIndex, num);
+				}
+				num++;
 			}
-			num++;
 		}
 
 		for (Sentence sen : c) {
