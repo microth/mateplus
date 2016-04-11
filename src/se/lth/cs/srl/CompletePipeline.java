@@ -280,7 +280,7 @@ public class CompletePipeline {
 				.get(CorefChainAnnotation.class);
 		int num = 1;
 		// this can be null apparently?!
-		if(coref==null || coref.entrySet()==null) {
+		if(coref!=null && coref.entrySet()!=null) {
 			for (Map.Entry<Integer, CorefChain> entry : coref.entrySet()) {
 				CorefChain cc = entry.getValue();
 				// skip singleton mentions
