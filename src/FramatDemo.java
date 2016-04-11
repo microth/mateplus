@@ -108,7 +108,8 @@ public class FramatDemo {
 				continue;
 
 			for (CorefMention m : cc.getMentionsInTextualOrder()) {
-				c.addMention(c.get(m.sentNum - 1), m.headIndex, num);
+				if(m!=null)
+					c.addMention(c.get(m.sentNum - 1), m.headIndex, num);
 			}
 			num++;
 		}
