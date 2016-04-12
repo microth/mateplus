@@ -31,7 +31,7 @@ JVM_ARGS="-cp $CP -Xmx$MEM"
 ##################################################
 ## (3) The following changes the behaviour of the system
 ##################################################
-RERANKER="-reranker -framenet $FRAMENETDIR -fdir featuresets/framat-nocontext/"
+RERANKER="-reranker -globalFeats -framenet $FRAMENETDIR -fdir featuresets/framat-nocontext/"
 
 #Execute
 CMD="$JAVA $JVM_ARGS se.lth.cs.srl.Learn $Lang $CORPUS $MODEL $DEBUG $RERANKER $LLBINARY"
